@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://difu1j5o73lq7"]
+
+[ext_resource type="Texture2D" uid="uid://k2nmlv7ojg2m" path="res://assets/Classic Dungeons - Files/walls.png" id="1_8uru7"]
+
+[node name="WallTile" type="Node2D" unique_id=249634772]
+scale = Vector2(2, 2)
+
+[node name="BodenFarbe" type="ColorRect" parent="." unique_id=591042954]
+offset_right = 16.0
+offset_bottom = 16.0
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1768123834]
+texture_filter = 1
+texture = ExtResource("1_8uru7")
+centered = false
+hframes = 7
+vframes = 8
+frame = 1

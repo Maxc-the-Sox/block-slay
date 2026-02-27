@@ -1,0 +1,55 @@
+[gd_scene format=3 uid="uid://hvf6jjtseakb"]
+
+[ext_resource type="Script" uid="uid://c4y2toso4wpsb" path="res://chest.gd" id="1_8uwsg"]
+[ext_resource type="Texture2D" uid="uid://cr5jwxcqitgkm" path="res://assets/Classic Dungeons - Files/classic_dungeons_animated_box_chest.png" id="1_twpm2"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8uwsg"]
+atlas = ExtResource("1_twpm2")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bp1or"]
+atlas = ExtResource("1_twpm2")
+region = Rect2(32, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_trlyu"]
+atlas = ExtResource("1_twpm2")
+region = Rect2(48, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_x7mpe"]
+atlas = ExtResource("1_twpm2")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_bv3sb"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8uwsg")
+}],
+"loop": false,
+"name": &"idle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_bp1or")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_trlyu")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_x7mpe")
+}],
+"loop": false,
+"name": &"open",
+"speed": 5.0
+}]
+
+[node name="Chest" type="Node2D" unique_id=95540494]
+script = ExtResource("1_8uwsg")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=258752034]
+position = Vector2(-8, 0)
+sprite_frames = SubResource("SpriteFrames_bv3sb")
+animation = &"open"
+centered = false
+flip_h = true
