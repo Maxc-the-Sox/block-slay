@@ -1,0 +1,21 @@
+[gd_scene format=3 uid="uid://boxnfdfg8d2lx"]
+
+[ext_resource type="Script" uid="uid://dp7t3q0iqu8nf" path="res://arrow.gd" id="1_2ndhl"]
+[ext_resource type="Texture2D" uid="uid://ctx5cvxkf88dc" path="res://assets/Creature Extended- Supporter Pack/arrow.png" id="1_l5ahi"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_2ndhl"]
+size = Vector2(16, 3)
+
+[node name="Arrow" type="Area2D" unique_id=1674622042]
+z_index = 100
+script = ExtResource("1_2ndhl")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1068841237]
+rotation = 3.1415927
+texture = ExtResource("1_l5ahi")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1952558532]
+shape = SubResource("RectangleShape2D_2ndhl")
+
+[node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="." unique_id=1521058839]
+rect = Rect2(-8, -4, 16, 7)

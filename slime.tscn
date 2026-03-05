@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://d20mi7v1teowp"]
 
-[ext_resource type="Script" uid="uid://d14e40p6rhoj1" path="res://enemy.gd" id="1_5jc4t"]
+[ext_resource type="Script" uid="uid://bew8hmllthoih" path="res://action_enemy.gd" id="1_5jc4t"]
 [ext_resource type="Texture2D" uid="uid://dj14po2usup76" path="res://assets/Creature Extended- Supporter Pack/slime.png" id="2_4l1t8"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_iifgy"]
@@ -237,12 +237,18 @@ animations = [{
 "speed": 5.0
 }]
 
-[node name="Slime" type="Node2D" unique_id=662255477]
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_5jc4t"]
+radius = 5.0
+height = 13.5
+
+[node name="Slime" type="CharacterBody2D" unique_id=1731233225]
 script = ExtResource("1_5jc4t")
-hp = 1
+speed = 50.0
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=356197024]
-scale = Vector2(2, 2)
 sprite_frames = SubResource("SpriteFrames_0jgdh")
 animation = &"die"
 autoplay = "idle"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=11300874]
+shape = SubResource("CapsuleShape2D_5jc4t")

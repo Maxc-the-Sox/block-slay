@@ -45,28 +45,27 @@ var opened_doors = []
 var ui_scene = preload("res://UI.tscn")
 var ui_instance = null
 
-# Liste der aufgedeckten Bodenplatten
 var revealed_cells = []
 
 var wand_tabelle = {
-	# BLOCK A (Keine Innenecken)
+	# BLOCK A
 	0: 0, 15: 14, 1: 19, 2: 11, 4: 5, 8: 13, 5: 26, 10: 10,
 	3: 24, 6: 45, 12: 42, 9: 21, 7: 27, 14: 17, 13: 25, 11: 3,
 	
-	# BLOCK B (1 bis 4 Löcher)
+	# BLOCK B
 	16: 20, 32: 18, 64: 4, 128: 6,
 	48: 1, 96: 9, 192: 15, 144: 7,
 	80: 2, 160: 16,
 	112: 36, 224: 29, 208: 30, 176: 37,
 	240: 40,
 	
-	# BLOCK C (Ränder + gegenüberliegende Löcher)
+	# BLOCK C
 	65: 22, 129: 23, 193: 33,
 	18: 38, 130: 31, 146: 41,
 	20: 44, 36: 43, 52: 47,
 	40: 35, 72: 28, 104: 39,
 	
-	# BLOCK D (Dicke Ecken mit einem Diagonal-Loch)
+	# BLOCK D
 	131: 34, 22: 48, 44: 46, 73: 32
 }
 
@@ -85,11 +84,9 @@ var fall_speed = 1.0
 var player_gold = 0 
 
 # GEGNER & OBJEKTE
-var slime_scene = preload("res://slime.tscn")
-var orc_scene = preload("res://orc.tscn")
 var chest_scene = preload("res://Chest.tscn") 
 
-var enemies = []
+var enemies = [] # Hält ab jetzt nur noch Vector2-Koordinaten, keine echten Szenen mehr!
 var chests = {} 
 
 var logical_player_pos = Vector2(4, 19)
@@ -138,25 +135,8 @@ func _process(delta):
 		fall_timer = 0
 		move_piece(Vector2.DOWN)
 	
-	if not input_locked:
-		if Input.is_action_just_pressed("ui_accept"):
-			toggle_attack_mode()
-		
-		if move_delay_timer > 0:
-			move_delay_timer -= delta
-		else:
-			var move_dir = Vector2.ZERO
-			if Input.is_action_pressed("ui_right"): move_dir = Vector2.RIGHT
-			elif Input.is_action_pressed("ui_left"): move_dir = Vector2.LEFT
-			elif Input.is_action_pressed("ui_down"): move_dir = Vector2.DOWN
-			elif Input.is_action_pressed("ui_up"): move_dir = Vector2.UP
-			
-			if move_dir != Vector2.ZERO:
-				if attack_mode:
-					perform_attack(move_dir)
-				else:
-					try_move_player(move_dir)
-				move_delay_timer = move_delay_speed
+	# Die Spieler-Steuerung (try_move_player) wurde hier entfernt!
+	# Nur noch der Fall-Timer und das queue_redraw bleiben.
 	
 	queue_redraw()
 
@@ -184,6 +164,13 @@ func _draw():
 					draw_texture_rect(monster_icon, Rect2(icon_pos, icon_size), false)
 				elif current_has_chest: 
 					draw_texture_rect(chest_icon, Rect2(icon_pos, icon_size), false)
+					
+	# Zeichne auch die fixierten Monster-Icons
+	for pos in enemies:
+		var pixel_pos = BOARD_OFFSET + (pos * TILE_SIZE)
+		var icon_size = Vector2(24, 24)
+		var icon_pos = pixel_pos + Vector2(4, 4)
+		draw_texture_rect(monster_icon, Rect2(icon_pos, icon_size), false)
 
 func _input(event):
 	if is_game_over: return 
@@ -202,7 +189,6 @@ func spawn_new_piece():
 	current_piece = SHAPES.pick_random().duplicate()
 	current_color_idx = randi() % COLORS.size()
 	
-	# Zufall: Monster ODER Truhe
 	current_has_enemy = false
 	current_has_chest = false
 	
@@ -212,42 +198,23 @@ func spawn_new_piece():
 	elif r < 0.3:
 		current_has_chest = true
 
-	# --- DIE STOPF-LOGIK (DER VORSCHLAGHAMMER) ---
 	if not is_valid_position(current_piece, current_pos):
-		# 1. Den Stein SOFORT ins Raster einbrennen
 		for p in current_piece:
 			var final_pos = (current_pos + p).snapped(Vector2(1, 1))
-			# Nur was im Grid ist (Y >= 0), wird gespeichert
 			if final_pos.y >= 0 and final_pos.y < GRID_HEIGHT and final_pos.x >= 0 and final_pos.x < GRID_WIDTH:
 				if not grid_data.has(final_pos):
 					grid_data[final_pos] = current_color_idx
 					grid_age[final_pos] = current_age
 		
-		# 2. Den "current_piece" leeren, damit er nicht doppelt (schwebend) gezeichnet wird
 		current_piece = [] 
-		
-		# 3. Grafik komplett neu aufbauen
 		recalculate_dungeon_layout()
 		update_dungeon_graphics()
-		
-		# 4. Den Bildschirm zwingen, sich JETZT zu aktualisieren
 		queue_redraw() 
 		
-		# 5. Einen winzigen Moment warten, damit das Auge den Stein sieht
-		# Wir nutzen hier einen Timer, weil process_frame manchmal zu schnell ist
 		await get_tree().create_timer(0.2).timeout 
-		
-		# 6. Ab in den Dungeon
 		starte_action_dungeon()
 		return
 	
-	# Wenn er doch passt (Normalfall), geht das Spiel einfach weiter.
-
-	# ==========================================
-	# ---> DER FEHLENDE SCHUTZ-CHECK! <---
-	# Wenn der neue Stein in einem alten feststeckt: 
-	# Sofort abbrechen und Dungeon laden!
-	# ==========================================
 	if not is_valid_position(current_piece, current_pos):
 		starte_action_dungeon()
 		return
@@ -283,10 +250,8 @@ func lock_piece():
 		
 		if i == 0: spawn_pos_special = final_pos
 	
-	# Was spawnen wir?
 	if current_has_enemy:
-		if randf() < 0.5: spawn_enemy(spawn_pos_special, 1) 
-		else: spawn_enemy(spawn_pos_special, 2) 
+		spawn_enemy(spawn_pos_special)
 	elif current_has_chest:
 		spawn_chest(spawn_pos_special)
 	
@@ -294,50 +259,29 @@ func lock_piece():
 	recalculate_dungeon_layout()
 	update_dungeon_graphics()
 	
-	# Der nächste Stein versucht zu spawnen. 
-	# Wenn oben schon alles voll ist, greift unser Schutz in spawn_new_piece()!
 	spawn_new_piece()
 
 # --- NEU: RUCKSACK PACKEN UND SZENE WECHSELN ---
 func starte_action_dungeon():
 	print("Decke erreicht! Phase 1: Rucksack packen...")
 	
-	# 1. Die Karte speichern
 	GlobalData.tetris_grid = grid_data.duplicate()
-	
-	# ---> NEU: 1.5 Die Türen speichern <---
 	GlobalData.tetris_doors = doors.duplicate(true)
-	
-	# 2. Die Truhen-Positionen speichern
 	GlobalData.truhen_positionen = chests.keys()
 	
-	# 3. Die Monster-Positionen speichern
 	GlobalData.monster_positionen.clear()
-	for e in enemies:
-		if is_instance_valid(e):
-			GlobalData.monster_positionen.append(e.logical_pos)
+	for pos in enemies:
+		GlobalData.monster_positionen.append(pos)
 	
 	print("Daten sind im Rucksack! Bereit für den Dungeon-Modus!")
 	is_game_over = true 
 	
-	# Teleport in die Action-Welt!
 	get_tree().change_scene_to_file("res://ActionDungeon.tscn")
 
 # --- SPAWNER ---
-func spawn_enemy(pos, type):
-	var new_enemy
-	if type == 1: new_enemy = slime_scene.instantiate() 
-	elif type == 2: new_enemy = orc_scene.instantiate()   
-	else: return 
-		
-	add_child(new_enemy)
-	new_enemy.logical_pos = pos
-	new_enemy.position = get_pixel_pos(pos)
-	
-	new_enemy.z_index = int(pos.y)
-	
-	new_enemy.visible = false 
-	enemies.append(new_enemy)
+func spawn_enemy(pos):
+	# Wir merken uns nur noch die Position für später, spawnen aber keine 3D/2D Szene mehr!
+	enemies.append(pos)
 
 func spawn_chest(pos):
 	var new_chest = chest_scene.instantiate()
@@ -351,87 +295,8 @@ func spawn_chest(pos):
 # --- STANDARDS ---
 
 func check_lines():
-	var lines_to_clear = []
-	for y in range(GRID_HEIGHT):
-		var is_full = true
-		for x in range(GRID_WIDTH):
-			if not grid_data.has(Vector2(x, y)):
-				is_full = false; break
-		if is_full: lines_to_clear.append(y)
-			
-	if lines_to_clear.size() == 0: return 
-
-	var player_y = int(round(logical_player_pos.y))
-	if player_y in lines_to_clear:
-		player.queue_free(); game_over("Spieler gesprengt!"); return
-
-	for i in range(enemies.size() - 1, -1, -1):
-		var enemy = enemies[i]
-		if is_instance_valid(enemy):
-			var enemy_y = int(round(enemy.logical_pos.y))
-			if enemy_y in lines_to_clear:
-				enemy.die(); enemies.remove_at(i)
-
-	var chests_to_remove = []
-	for pos in chests:
-		if int(round(pos.y)) in lines_to_clear:
-			chests_to_remove.append(pos)
-	for pos in chests_to_remove:
-		if is_instance_valid(chests[pos]):
-			chests[pos].queue_free()
-		chests.erase(pos)
-
-	var new_grid_data = {}
-	var new_grid_age = {}
-	
-	lines_to_clear.sort()
-	for pos in grid_data:
-		var y = int(round(pos.y))
-		if y in lines_to_clear: continue
-		var shift = 0
-		for cleared_y in lines_to_clear:
-			if cleared_y > y: shift += 1
-		var new_pos = (pos + Vector2(0, shift)).snapped(Vector2(1, 1))
-		
-		new_grid_data[new_pos] = grid_data[pos]
-		if grid_age.has(pos):
-			new_grid_age[new_pos] = grid_age[pos]
-			
-	grid_data = new_grid_data
-	grid_age = new_grid_age
-	
-	var p_shift = 0
-	for cleared_y in lines_to_clear:
-		if cleared_y > logical_player_pos.y: p_shift += 1
-	if p_shift > 0:
-		logical_player_pos = (logical_player_pos + Vector2(0, p_shift)).snapped(Vector2(1, 1))
-		update_player_visuals()
-		
-	for enemy in enemies:
-		if is_instance_valid(enemy):
-			var e_shift = 0
-			for cleared_y in lines_to_clear:
-				if cleared_y > enemy.logical_pos.y: e_shift += 1
-			if e_shift > 0:
-				enemy.logical_pos = (enemy.logical_pos + Vector2(0, e_shift)).snapped(Vector2(1, 1))
-				enemy.position = get_pixel_pos(enemy.logical_pos)
-				enemy.z_index = int(enemy.logical_pos.y)
-	
-	var new_chests = {}
-	for pos in chests:
-		var y = int(round(pos.y))
-		var shift = 0
-		for cleared_y in lines_to_clear:
-			if cleared_y > y: shift += 1
-		
-		var new_pos = (pos + Vector2(0, shift)).snapped(Vector2(1, 1))
-		var chest_node = chests[pos]
-		if is_instance_valid(chest_node):
-			chest_node.position = get_pixel_pos(new_pos)
-			chest_node.z_index = int(new_pos.y)
-			new_chests[new_pos] = chest_node
-	chests = new_chests
-
+	# ZEILENLÖSCHEN KOMPLETT DEAKTIVIERT
+	return
 
 func update_dungeon_graphics():
 	for node in wall_nodes.values(): if is_instance_valid(node): node.queue_free()
@@ -448,11 +313,9 @@ func update_dungeon_graphics():
 		
 		var boden = w.get_node_or_null("BodenFarbe")
 		
+		# FOG OF WAR ENTFERNT: Wir nutzen immer die helle Farbe
 		if boden:
-			if pos in revealed_cells:
-				boden.color = COLORS[farbe] 
-			else:
-				boden.color = COLORS[farbe].darkened(0.5) 
+			boden.color = COLORS[farbe] 
 		
 		var hat_oben = (grid_data.has(pos + Vector2.UP) and grid_data[pos + Vector2.UP] == farbe) or is_door_open(pos, Vector2.UP)
 		var hat_rechts = (grid_data.has(pos + Vector2.RIGHT) and grid_data[pos + Vector2.RIGHT] == farbe) or is_door_open(pos, Vector2.RIGHT)
@@ -465,12 +328,10 @@ func update_dungeon_graphics():
 		var hat_unten_links = grid_data.has(pos + Vector2(-1, 1)) and grid_data[pos + Vector2(-1, 1)] == farbe
 		
 		var summe = 0
-		
 		if not hat_oben: summe += 1
 		if not hat_rechts: summe += 2
 		if not hat_unten: summe += 4
 		if not hat_links: summe += 8
-		
 		if hat_oben and hat_links and not hat_oben_links: summe += 16
 		if hat_oben and hat_rechts and not hat_oben_rechts: summe += 32
 		if hat_unten and hat_rechts and not hat_unten_rechts: summe += 64
@@ -478,12 +339,30 @@ func update_dungeon_graphics():
 		
 		var s = w.get_node_or_null("Sprite2D")
 		if s: 
-			if wand_tabelle.has(summe):
-				s.frame = wand_tabelle[summe]
-			else:
-				s.frame = 0 
+			if wand_tabelle.has(summe): s.frame = wand_tabelle[summe]
+			else: s.frame = 0 
 				
 		wall_nodes[pos] = w
+
+	# Türen werden weiterhin normal gezeichnet
+	for pos in doors:
+		for dir in doors[pos]:
+			var neighbor_pos = (pos + dir).snapped(Vector2(1, 1))
+			if grid_age.has(pos) and grid_age.has(neighbor_pos):
+				if grid_age[pos] < grid_age[neighbor_pos]: continue 
+			var check_key = str(pos) + str(dir)
+			if check_key in opened_doors: continue 
+			var d = door_scene.instantiate()
+			add_child(d)
+			d.scale = Vector2(1.5, 1.5)
+			d.position = BOARD_OFFSET + (pos * TILE_SIZE) + Vector2(TILE_SIZE/2.0, TILE_SIZE/2.0)
+			d.z_index = int(pos.y) 
+			if dir == Vector2.DOWN: d.type = "bottom"; d.position.y += 8
+			elif dir == Vector2.LEFT: d.type = "left"; d.position.x -= 8
+			elif dir == Vector2.RIGHT: d.type = "right"; d.position.x += 8
+			elif dir == Vector2.UP: d.queue_free(); continue
+			d.play_idle()
+			door_nodes[check_key] = d
 
 	for pos in doors:
 		for dir in doors[pos]:
@@ -614,9 +493,6 @@ func try_move_player(dir):
 	var target = logical_player_pos + dir
 	if not grid_data.has(target): return 
 	
-	var enemy = get_enemy_at(target)
-	if enemy and enemy.visible: return 
-	
 	var my_color = grid_data[logical_player_pos]
 	var target_color = grid_data[target]
 	
@@ -671,9 +547,6 @@ func reveal_room(start_pos, color):
 			revealed_cells.append(current)
 			changes_made = true
 		
-		var enemy = get_enemy_at(current)
-		if enemy: enemy.visible = true
-		
 		if chests.has(current):
 			if is_instance_valid(chests[current]):
 				chests[current].visible = true
@@ -687,65 +560,22 @@ func reveal_room(start_pos, color):
 
 # --- KAMPF-MODUS UMSCHALTER ---
 func toggle_attack_mode():
-	attack_mode = !attack_mode
-	player.modulate = Color.YELLOW if attack_mode else Color.WHITE
+	pass # Keine Kämpfe mehr im Tetris!
 
 # --- KAMPF ---
-func perform_attack(dir):
-	if is_game_over: return
-	
-	input_locked = true
-	player.last_direction = dir
-	
-	player.attack_visual()
-	await get_tree().create_timer(0.4).timeout
-	
-	check_attack_hit()
-	
-	attack_mode = false
-	player.modulate = Color.WHITE
-	
-	end_player_turn()
-	input_locked = false
-
-func check_attack_hit():
-	var target_pos = logical_player_pos + player.last_direction
-	var enemy = get_enemy_at(target_pos)
-	if enemy and enemy.visible: 
-		enemy.take_damage(1)
-		
-		if enemy.hp <= 0:
-			enemies.erase(enemy)
-		else:
-			var push_target = enemy.logical_pos + player.last_direction
-			if grid_data.has(push_target) and get_enemy_at(push_target) == null:
-				if grid_data[enemy.logical_pos] == grid_data[push_target] or is_door_open(enemy.logical_pos, player.last_direction):
-					var d_key = str(enemy.logical_pos) + str(player.last_direction)
-					if not door_nodes.has(d_key): enemy.push_back(push_target, get_pixel_pos(push_target))
+func perform_attack(_dir):
+	pass # Keine Kämpfe mehr im Tetris!
 
 func end_player_turn():
 	if player.hp <= 0: game_over("Vom Monster gefressen!"); return
 	
-	var hp_before = player.hp
-	
-	for enemy in enemies: 
-		if is_instance_valid(enemy) and enemy.visible: 
-			enemy.do_turn(logical_player_pos, player)
-			enemy.z_index = int(enemy.logical_pos.y)
-	
-	if player.hp != hp_before:
-		if ui_instance: ui_instance.update_health(player.hp, MAX_PLAYER_HP)
-
-	if player.hp <= 0: game_over("Vom Monster gefressen!")
+	if ui_instance: ui_instance.update_health(player.hp, MAX_PLAYER_HP)
 
 func update_player_visuals(): 
 	player.move_visual(get_pixel_pos(logical_player_pos))
 	player.z_index = int(logical_player_pos.y)
 
 func get_pixel_pos(pos): return BOARD_OFFSET + (pos * TILE_SIZE) + Vector2(TILE_SIZE/2.0, TILE_SIZE/2.0)
-func get_enemy_at(pos):
-	for e in enemies: if is_instance_valid(e) and e.logical_pos == pos: return e
-	return null
 
 func game_over(grund):
 	print("GAME OVER: ", grund)

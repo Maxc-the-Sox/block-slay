@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://cjipjva7d8f2h"]
 
-[ext_resource type="Script" uid="uid://d14e40p6rhoj1" path="res://enemy.gd" id="1_3xw0u"]
+[ext_resource type="Script" uid="uid://bew8hmllthoih" path="res://action_enemy.gd" id="1_3xw0u"]
 [ext_resource type="Texture2D" uid="uid://dpn0wabnfjeub" path="res://assets/Creature Extended- Supporter Pack/orc.png" id="1_ws5q1"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_3xw0u"]
@@ -402,11 +402,17 @@ animations = [{
 "speed": 5.0
 }]
 
-[node name="Orc" type="Node2D" unique_id=1248722150]
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_3xw0u"]
+radius = 5.0
+height = 14.0
+
+[node name="Orc" type="CharacterBody2D" unique_id=1738686557]
 script = ExtResource("1_3xw0u")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1191481479]
-scale = Vector2(2, 2)
 sprite_frames = SubResource("SpriteFrames_bk8dv")
-animation = &"die_front"
+animation = &"attack_down"
 autoplay = "idle_front"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1499209516]
+shape = SubResource("CapsuleShape2D_3xw0u")

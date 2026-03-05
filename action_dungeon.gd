@@ -22,6 +22,14 @@ var boden_pinsel_woerterbuch = {
 @onready var player = $SubViewportContainer/SubViewport/ActionPlayer
 @onready var ui = $UI # Sofern dein UI-Node im Baum genau "UI" heißt
 
+# Lade die Gegner-Szenen schon mal vor
+var gegner_szenen = [
+	preload("res://slime.tscn"),
+	preload("res://orc.tscn"),
+	preload("res://skeleton_archer.tscn"),
+	preload("res://zombie.tscn") #
+]
+
 # NEU: Das Management für die "Post-it" Schatten
 var zelle_zu_raum = {} 
 var unentdeckte_raeume = {}
@@ -40,23 +48,17 @@ func _ready():
 	generiere_dungeon()
 	
 	# NEU: Dem UI sagen, dass es die Herzen zeichnen soll!
-	# (Pass die 10 an, falls dein Spieler mehr/weniger Max-HP hat)
 	if is_instance_valid(ui):
 		ui.update_health(player.hp, 10) 
-		# Falls du Gold hast, kannst du hier auch ui.update_gold(0) aufrufen
 
 func _process(_delta):
 	if is_instance_valid(player):
-		# 1. Auf welcher exakten Kachel (Tile) steht der Spieler?
 		var tile_x = int(floor(player.position.x / TILE_PIXEL_SIZE))
 		var tile_y = int(floor(player.position.y / TILE_PIXEL_SIZE))
 		
-		# 2. Wo ist diese Kachel im 6x6 Raster? (0 bis 5)
 		var lokal_x = posmod(tile_x, ROOM_SIZE)
 		var lokal_y = posmod(tile_y, ROOM_SIZE)
 		
-		# DER FIX: Nur wenn wir auf dem Fußboden (0, 1, 2, 3 oder 4) stehen!
-		# Spalte/Zeile 5 ist IMMER die Wand oder Tür. Da decken wir nichts auf.
 		if lokal_x < 5 and lokal_y < 5:
 			var raum_x = floor(tile_x / float(ROOM_SIZE))
 			var raum_y = floor(tile_y / float(ROOM_SIZE))
@@ -79,8 +81,33 @@ func _process(_delta):
 									if kachel_schatten.has(welt_pos):
 										var s = kachel_schatten[welt_pos]
 										if is_instance_valid(s):
-											s.queue_free()
+											var tween = create_tween()
+											tween.tween_property(s, "modulate:a", 0.0, 0.5)
+											tween.tween_callback(s.queue_free)
 										kachel_schatten.erase(welt_pos)
+
+							for lx in range(-1, ROOM_SIZE):
+								var welt_pos = Vector2i(start_x + lx, start_y - 2)
+								if kachel_schatten.has(welt_pos):
+									var s = kachel_schatten[welt_pos]
+									if is_instance_valid(s):
+										var tween = create_tween()
+										tween.tween_property(s, "size:y", 8.0, 0.5)
+
+# ---> NEU: MONSTER IN DIESEM RAUM AUFWECKEN! <---
+					var alle_monster = get_tree().get_nodes_in_group("Enemies")
+					for monster in alle_monster:
+						if is_instance_valid(monster) and not monster.is_active:
+							# Wo steht das Monster im Raster?
+							var m_tile_x = int(floor(monster.position.x / TILE_PIXEL_SIZE))
+							var m_tile_y = int(floor(monster.position.y / TILE_PIXEL_SIZE))
+							var m_raum_x = floor(m_tile_x / float(ROOM_SIZE))
+							var m_raum_y = floor(m_tile_y / float(ROOM_SIZE))
+							var monster_zelle = Vector2(m_raum_x, m_raum_y)
+							
+							# Prüfen, ob das Monster zur exakt gleichen Raum-ID (Tetris-Teil) gehört!
+							if zelle_zu_raum.has(monster_zelle) and zelle_zu_raum[monster_zelle] == raum_id:
+								monster.wake_up()
 
 func generiere_dungeon():
 	print("Starte Weltenbau: Meister-Version mit perfektem Wand-Schatten!")
@@ -229,13 +256,28 @@ func generiere_dungeon():
 	# ==========================================
 	# 6. FOG OF WAR (Schatten verteilen)
 	# ==========================================
-	# Wir pflastern den kompletten fertigen Dungeon mit Post-its voll!
 	for pos in finale_boden_zellen.keys(): _erstelle_schatten_kachel(pos)
 	for pos in mauer_zellen: _erstelle_schatten_kachel(pos)
 
-	print("Dungeon erfolgreich und makellos generiert!")
+# ==========================================
+	# 7. MONSTER AUS DEM RUCKSACK LADEN (REPARIERT)
+	# ==========================================
+	for tetris_pos in GlobalData.monster_positionen:
+		var start_x = int(tetris_pos.x) * ROOM_SIZE
+		var start_y = int(tetris_pos.y) * ROOM_SIZE
+		
+		var zufalls_index = randi() % gegner_szenen.size()
+		var gegner = gegner_szenen[zufalls_index].instantiate()
+		
+		# Wir setzen sie in die Mitte des Raums (3, 3)
+		var basis_pos = Vector2(start_x + 3.0, start_y + 3.0)
+		gegner.position = basis_pos * TILE_PIXEL_SIZE
+		gegner.z_index = int(basis_pos.y)
+		
+		viewport.add_child(gegner)
 
-# Hilfsfunktion für die kleinen Schatten-Kacheln
+
+# Hilfsfunktion, die unten separat steht!
 func _erstelle_schatten_kachel(pos: Vector2i):
 	if not kachel_schatten.has(pos):
 		var schatten = ColorRect.new()

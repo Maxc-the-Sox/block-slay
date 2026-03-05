@@ -2678,13 +2678,13 @@ texture = ExtResource("6_qpgvr")
 6:5/0/terrains_peering_bit/top_side = 2
 7:5/0 = 0
 7:5/0/terrain_set = 0
-7:5/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, 8, 8, 8, 8, 8, -8, 8)
+7:5/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
 8:5/0 = 0
 8:5/0/terrain_set = 0
-8:5/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, 8, 8, 8, 8, 8, -8, 8)
+8:5/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
 9:5/0 = 0
 9:5/0/terrain_set = 0
-9:5/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, 8, 8, 8, 8, 8, -8, 8)
+9:5/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
 10:5/0 = 0
 11:5/0 = 0
 11:5/0/terrain_set = 0
@@ -2998,6 +2998,17 @@ sources/2 = SubResource("TileSetAtlasSource_k4ywy")
 sources/3 = SubResource("TileSetAtlasSource_ypwby")
 sources/4 = SubResource("TileSetAtlasSource_dsxuy")
 
+[sub_resource type="Gradient" id="Gradient_v21gm"]
+offsets = PackedFloat32Array(0, 0.98695654)
+colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_54nbk"]
+gradient = SubResource("Gradient_v21gm")
+width = 256
+height = 256
+fill = 1
+fill_from = Vector2(0.5, 0.508547)
+
 [node name="ActionDungeon" type="Node2D" unique_id=1701559312]
 y_sort_enabled = true
 script = ExtResource("1_x8d13")
@@ -3031,5 +3042,13 @@ tile_set = SubResource("TileSet_ibpc2")
 [node name="ActionPlayer" parent="SubViewportContainer/SubViewport" unique_id=1515787833 instance=ExtResource("1_dvxun")]
 
 [node name="Camera2D2" type="Camera2D" parent="SubViewportContainer/SubViewport/ActionPlayer" unique_id=55273539]
+
+[node name="PointLight2D2" type="PointLight2D" parent="SubViewportContainer/SubViewport/ActionPlayer" unique_id=2139211727]
+color = Color(0.767174, 0.2288413, 4.813075e-07, 1)
+energy = 1.5
+texture = SubResource("GradientTexture2D_54nbk")
+
+[node name="CanvasModulate" type="CanvasModulate" parent="SubViewportContainer/SubViewport" unique_id=589477903]
+color = Color(0.02247451, 0, 0.34414572, 1)
 
 [node name="UI" parent="." unique_id=1593659063 instance=ExtResource("8_54nbk")]
