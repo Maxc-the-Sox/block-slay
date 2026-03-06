@@ -37,6 +37,12 @@ func _on_area_2d_body_entered(body):
 
 func open_door():
 	is_open = true
+	
+	# ---> NEU: TÜR KNARRT! <---
+	# Wir spielen den Sound direkt ab, wenn die Tür den Befehl zum Öffnen bekommt.
+	if has_node("SfxOpen"):
+		$SfxOpen.play()
+	
 	if door_type == "side":
 		anim.play("opening_side")
 		wall_side.set_deferred("disabled", true) # Mauer weg!

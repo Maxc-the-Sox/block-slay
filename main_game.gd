@@ -130,6 +130,8 @@ func _ready():
 	
 	ui_instance.update_health(player.hp, GlobalData.player_max_hp)
 	ui_instance.update_gold(player_gold)
+	
+	MusicManager.play_tetris()
 
 func _process(delta):
 	if is_game_over: return 
@@ -232,7 +234,11 @@ func move_piece(dir):
 func rotate_piece():
 	var new_shape = []
 	for p in current_piece: new_shape.append(Vector2(p.y, -p.x))
-	if is_valid_position(new_shape, current_pos): current_piece = new_shape
+	if is_valid_position(new_shape, current_pos): 
+		current_piece = new_shape
+		# ---> NEU: SOUND FÜR DAS DREHEN <---
+		if has_node("SfxRotate"):
+			$SfxRotate.play()
 
 func is_valid_position(shape, pos):
 	for p in shape:
@@ -242,6 +248,25 @@ func is_valid_position(shape, pos):
 	return true
 
 func lock_piece():
+	var hat_gleiche_farbe_beruehrt = false
+	
+	# 1. Wir scannen VORHER, ob wir Nachbarn gleicher Farbe haben
+	for p in current_piece:
+		var final_pos = (current_pos + p).snapped(Vector2(1, 1))
+		for dir in [Vector2.UP, Vector2.DOWN, Vector2.LEFT, Vector2.RIGHT]:
+			var neighbor = final_pos + dir
+			if grid_data.has(neighbor) and grid_data[neighbor] == current_color_idx:
+				hat_gleiche_farbe_beruehrt = true
+				
+	# 2. Jetzt entscheiden wir, welcher Sound gespielt wird!
+	if hat_gleiche_farbe_beruehrt:
+		if has_node("SfxConnect"):
+			$SfxConnect.play()
+	else:
+		if has_node("SfxLock"):
+			$SfxLock.play()
+			
+	# 3. Danach ganz normal den Stein festkleben
 	current_age += 1 
 	var spawn_pos_special = Vector2.ZERO 
 	
@@ -476,8 +501,11 @@ func is_pos_in_grid_with_color(pos, color):
 
 func add_door(pos, dir):
 	var clean_pos = pos.snapped(Vector2(1, 1))
-	if not doors.has(clean_pos): doors[clean_pos] = []
-	if not dir in doors[clean_pos]: doors[clean_pos].append(dir)
+	if not doors.has(clean_pos): 
+		doors[clean_pos] = []
+		
+	if not dir in doors[clean_pos]: 
+		doors[clean_pos].append(dir)
 
 func is_door_open(from_pos, dir):
 	var clean_pos = from_pos.snapped(Vector2(1, 1))

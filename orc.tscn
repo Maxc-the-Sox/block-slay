@@ -2,6 +2,10 @@
 
 [ext_resource type="Script" uid="uid://bew8hmllthoih" path="res://action_enemy.gd" id="1_3xw0u"]
 [ext_resource type="Texture2D" uid="uid://dpn0wabnfjeub" path="res://assets/Creature Extended- Supporter Pack/orc.png" id="1_ws5q1"]
+[ext_resource type="AudioStream" uid="uid://ewp0yd6sqvvb" path="res://Sounds/Monster/Orc/01_orc_atk_sword_1.wav" id="3_31h1d"]
+[ext_resource type="AudioStream" uid="uid://dighse4b7ek6f" path="res://Sounds/Monster/Orc/07_orc_damage_1.wav" id="4_dfwqp"]
+[ext_resource type="AudioStream" uid="uid://c0v55migtvw0v" path="res://Sounds/Monster/Orc/13_orc_death_spin.wav" id="5_d22v1"]
+[ext_resource type="AudioStream" uid="uid://bs0ntxnffxkaa" path="res://Sounds/Monster/Orc/05_Minotaur_Idle_1.wav" id="6_wpvyt"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_3xw0u"]
 atlas = ExtResource("1_ws5q1")
@@ -417,3 +421,21 @@ autoplay = "idle_front"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1499209516]
 shape = SubResource("CapsuleShape2D_3xw0u")
+
+[node name="SfxAttack" type="AudioStreamPlayer2D" parent="." unique_id=1782330025]
+stream = ExtResource("3_31h1d")
+
+[node name="SfxHurt" type="AudioStreamPlayer2D" parent="." unique_id=1776033530]
+stream = ExtResource("4_dfwqp")
+
+[node name="SfxDeath" type="AudioStreamPlayer2D" parent="." unique_id=110946248]
+stream = ExtResource("5_d22v1")
+
+[node name="SfxIdle" type="AudioStreamPlayer2D" parent="." unique_id=38562933]
+stream = ExtResource("6_wpvyt")
+
+[node name="IdleTimer" type="Timer" parent="." unique_id=894044395]
+wait_time = 4.0
+autostart = true
+
+[connection signal="timeout" from="IdleTimer" to="." method="_on_idle_timer_timeout"]

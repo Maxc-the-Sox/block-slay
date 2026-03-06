@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bqh8x83wk2h3o" path="res://ActionDoor.gd" id="1_74afc"]
 [ext_resource type="Texture2D" uid="uid://f8lcfmdj6wl1" path="res://assets/Classic Dungeons - Files/classic_dungeons_doors.png" id="2_h3u2g"]
+[ext_resource type="AudioStream" uid="uid://l6w43np4afax" path="res://Sounds/Sfx/Creaking Door (5).mp3" id="3_loyup"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_h3u2g"]
 atlas = ExtResource("2_h3u2g")
@@ -106,5 +107,8 @@ shape = SubResource("RectangleShape2D_bq0dq")
 [node name="WallSide" type="CollisionShape2D" parent="StaticBody2D" unique_id=1663859828]
 position = Vector2(-6, 0)
 shape = SubResource("RectangleShape2D_1f1jb")
+
+[node name="SfxOpen" type="AudioStreamPlayer" parent="." unique_id=1207046470]
+stream = ExtResource("3_loyup")
 
 [connection signal="body_entered" from="Area2D" to="." method="_on_area_2d_body_entered"]

@@ -2,6 +2,9 @@
 
 [ext_resource type="Script" uid="uid://7mvwtxcstcxq" path="res://main_game.gd" id="1_yx7mw"]
 [ext_resource type="PackedScene" uid="uid://co8iipcwgoxl3" path="res://player.tscn" id="2_ykeeq"]
+[ext_resource type="AudioStream" uid="uid://crraym06x7pwr" path="res://Sounds/Sfx/drehen.wav" id="3_dugkq"]
+[ext_resource type="AudioStream" uid="uid://bb4fjrupqfirm" path="res://Sounds/Sfx/setzen.wav" id="4_2pltu"]
+[ext_resource type="AudioStream" uid="uid://dmwgyy3b40bsq" path="res://Sounds/Sfx/verbinden.wav" id="5_f52ns"]
 
 [node name="MainGame" type="Node2D" unique_id=1857528851]
 script = ExtResource("1_yx7mw")
@@ -60,3 +63,12 @@ grow_horizontal = 2
 grow_vertical = 2
 text = "Neustart"
 icon_alignment = 1
+
+[node name="SfxRotate" type="AudioStreamPlayer" parent="." unique_id=1301995329]
+stream = ExtResource("3_dugkq")
+
+[node name="SfxLock" type="AudioStreamPlayer" parent="." unique_id=352120620]
+stream = ExtResource("4_2pltu")
+
+[node name="SfxConnect" type="AudioStreamPlayer" parent="." unique_id=1996399369]
+stream = ExtResource("5_f52ns")

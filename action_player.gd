@@ -75,6 +75,7 @@ func _starte_angriff(ziel_position: Vector2):
 		last_direction = "down" if attack_dir.y > 0 else "up"
 		
 	anim.play("attack_" + last_direction)
+	$SfxAttack.play() # <--- NEU: Schwert-Sound!
 	_deal_damage_to_enemies() 
 
 func _physics_process(_delta):
@@ -162,6 +163,7 @@ func _deal_damage_to_enemies():
 func take_damage(amount: int):
 	if is_dead: return
 	hp -= amount
+	$SfxHurt.play() # <--- NEU: Autsch-Sound!
 	
 	modulate = Color.RED
 	var tween = create_tween()
@@ -174,6 +176,7 @@ func take_damage(amount: int):
 	if hp <= 0:
 		is_dead = true
 		velocity = Vector2.ZERO
+		$SfxDeath.play() # <--- NEU: Sterbe-Sound!
 		print("GAME OVER - Spieler ist tot!")
 		
 		if anim.sprite_frames.has_animation("die"):

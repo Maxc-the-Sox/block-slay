@@ -23,10 +23,19 @@ func open():
 	# Baut den Namen zusammen, z.B. "open_bottom"
 	var anim_name = "open_" + type
 	
+	# ---> NEU: SOUND ABSPIELEN <---
+	if has_node("SfxOpen"):
+		$SfxOpen.play()
+	
 	if anim.sprite_frames.has_animation(anim_name):
 		anim.play(anim_name)
 		# Warten bis die Animation fertig ist
 		await anim.animation_finished
+		
+	# ---> NEU: SICHERHEITSNETZ <---
+	# Falls dein Sound länger dauert als die Animation, warten wir hier noch kurz ab!
+	if has_node("SfxOpen") and $SfxOpen.playing:
+		await $SfxOpen.finished
 	
 	# Und tschüss! Die Tür verschwindet logisch und grafisch.
 	queue_free()

@@ -2,6 +2,10 @@
 
 [ext_resource type="Script" uid="uid://bew8hmllthoih" path="res://action_enemy.gd" id="1_roy8y"]
 [ext_resource type="Texture2D" uid="uid://biiq7g7myvo4" path="res://assets/Creature Extended- Supporter Pack/zombie.png" id="2_roy8y"]
+[ext_resource type="AudioStream" uid="uid://dq2054axvb7du" path="res://Sounds/Monster/Zombie/01_Zombie_attack_1.wav" id="3_lnshm"]
+[ext_resource type="AudioStream" uid="uid://yyd3f6r8uyk2" path="res://Sounds/Monster/Zombie/03_Zombie_damage_1.wav" id="4_x5rsa"]
+[ext_resource type="AudioStream" uid="uid://chanlyuas30rf" path="res://Sounds/Monster/Zombie/05_Zombie_death.wav" id="5_ogcpr"]
+[ext_resource type="AudioStream" uid="uid://bpty2fgu8kfpc" path="res://Sounds/Monster/Zombie/07_Zombie_idle_2.wav" id="6_i82o5"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_jmu02"]
 atlas = ExtResource("2_roy8y")
@@ -417,3 +421,21 @@ autoplay = "idle_front"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=45745503]
 shape = SubResource("CapsuleShape2D_roy8y")
+
+[node name="SfxAttack" type="AudioStreamPlayer2D" parent="." unique_id=1023674701]
+stream = ExtResource("3_lnshm")
+
+[node name="SfxHurt" type="AudioStreamPlayer2D" parent="." unique_id=1102260512]
+stream = ExtResource("4_x5rsa")
+
+[node name="SfxDeath" type="AudioStreamPlayer2D" parent="." unique_id=1025107887]
+stream = ExtResource("5_ogcpr")
+
+[node name="SfxIdle" type="AudioStreamPlayer2D" parent="." unique_id=1410751602]
+stream = ExtResource("6_i82o5")
+
+[node name="IdleTimer" type="Timer" parent="." unique_id=2102545259]
+wait_time = 4.0
+autostart = true
+
+[connection signal="timeout" from="IdleTimer" to="." method="_on_idle_timer_timeout"]

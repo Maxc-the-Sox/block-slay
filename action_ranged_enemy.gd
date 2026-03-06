@@ -89,10 +89,19 @@ func _shoot_projectile(direction: Vector2):
 		
 	proj.direction = direction
 	proj.rotation = direction.angle()
+	
+	# ---> NEU: SOUND FÜR DEN BOGENSCHUSS <---
+	if has_node("SfxAttack"):
+		$SfxAttack.play()
 
 func take_damage(amount: int):
 	if is_dead: return
 	current_hp -= amount
+	
+	# ---> NEU: SOUND FÜR DEN SCHMERZ <---
+	if has_node("SfxHurt"):
+		$SfxHurt.play()
+		
 	modulate = Color.RED
 	var tween = create_tween()
 	tween.tween_property(self, "modulate", Color.WHITE, 0.2)
@@ -103,6 +112,11 @@ func die():
 	is_dead = true
 	is_active = false
 	velocity = Vector2.ZERO
+	
+	# ---> NEU: SOUND FÜR DAS STERBEN <---
+	if has_node("SfxDeath"):
+		$SfxDeath.play()
+		
 	if has_node("CollisionShape2D"):
 		$CollisionShape2D.set_deferred("disabled", true)
 	
@@ -145,3 +159,12 @@ func _on_animation_finished():
 		tween.tween_property(self, "modulate:a", 0.0, 1.0)
 		await tween.finished
 		queue_free()
+
+
+func _on_idle_timer_timeout():
+	if not is_dead and is_active:
+		if has_node("SfxIdle"):
+			$SfxIdle.play()
+		# Timer auf eine neue zufällige Zeit stellen (zwischen 3 und 8 Sekunden), 
+		# damit sie nicht wie Roboter alle im selben Takt grunzen!
+		$IdleTimer.wait_time = randf_range(3.0, 8.0)

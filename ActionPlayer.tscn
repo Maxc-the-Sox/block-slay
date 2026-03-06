@@ -3,6 +3,9 @@
 [ext_resource type="Script" uid="uid://cow4bnugtitk1" path="res://action_player.gd" id="1_v21gm"]
 [ext_resource type="Texture2D" uid="uid://iy48yt50btk5" path="res://assets/Warriors/caped_warrior_combat_32x32.png" id="2_efuve"]
 [ext_resource type="Texture2D" uid="uid://mhkgebc0uvp0" path="res://assets/Warriors/caped_warrior_16x16.png" id="3_6umuv"]
+[ext_resource type="AudioStream" uid="uid://3prqi23qf0tg" path="res://Sounds/Player/Druid_Attack.wav" id="4_w0ya8"]
+[ext_resource type="AudioStream" uid="uid://b36dlnsnux0gi" path="res://Sounds/Player/Druid_Damage_3.wav" id="5_j5wxd"]
+[ext_resource type="AudioStream" uid="uid://dwfq3lknl3tgq" path="res://Sounds/Player/Barbarian_Death.wav" id="6_h3a67"]
 
 [sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_v21gm"]
 light_mode = 1
@@ -574,3 +577,12 @@ zoom = Vector2(2, 2)
 color = Color(0.94403136, 0.64692247, 0.23647484, 1)
 energy = 1.5
 texture = SubResource("GradientTexture2D_efuve")
+
+[node name="SfxAttack" type="AudioStreamPlayer" parent="." unique_id=1871604410]
+stream = ExtResource("4_w0ya8")
+
+[node name="SfxHurt" type="AudioStreamPlayer" parent="." unique_id=6021619]
+stream = ExtResource("5_j5wxd")
+
+[node name="SfxDeath" type="AudioStreamPlayer" parent="." unique_id=289411797]
+stream = ExtResource("6_h3a67")

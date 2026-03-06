@@ -52,6 +52,8 @@ func _ready():
 	# NEU: Dem UI sagen, dass es die Herzen zeichnen soll!
 	if is_instance_valid(ui):
 		ui.update_health(player.hp, player.max_hp) 
+		
+		MusicManager.play_dungeon()
 
 func _process(_delta):
 	if is_instance_valid(player):

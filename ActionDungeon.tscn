@@ -3023,6 +3023,7 @@ offset_bottom = 645.0
 
 [node name="SubViewport" type="SubViewport" parent="SubViewportContainer" unique_id=157165370]
 handle_input_locally = false
+audio_listener_enable_2d = true
 size = Vector2i(320, 640)
 render_target_update_mode = 4
 
