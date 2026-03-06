@@ -66,9 +66,12 @@ icon_alignment = 1
 
 [node name="SfxRotate" type="AudioStreamPlayer" parent="." unique_id=1301995329]
 stream = ExtResource("3_dugkq")
+volume_db = -15.0
 
 [node name="SfxLock" type="AudioStreamPlayer" parent="." unique_id=352120620]
 stream = ExtResource("4_2pltu")
+volume_db = -15.0
 
 [node name="SfxConnect" type="AudioStreamPlayer" parent="." unique_id=1996399369]
 stream = ExtResource("5_f52ns")
+volume_db = -15.0
