@@ -30,6 +30,8 @@ var gegner_szenen = [
 	preload("res://zombie.tscn") #
 ]
 
+var leiter_szene = preload("res://ladder.tscn") # NEU: Die Leiter laden
+
 # NEU: Das Management für die "Post-it" Schatten
 var zelle_zu_raum = {} 
 var unentdeckte_raeume = {}
@@ -276,6 +278,26 @@ func generiere_dungeon():
 		
 		viewport.add_child(gegner)
 
+	# ==========================================
+	# 8. DIE LEITER IN DEN HÖCHSTEN RAUM SETZEN
+	# ==========================================
+	var hoechster_raum = Vector2(0, 99) # Ein fiktiver tiefer Startwert
+	
+	# Wir suchen den Raum, der am weitesten oben im Tetris-Feld ist (kleinstes Y)
+	for pos in GlobalData.tetris_grid.keys():
+		if pos.y < hoechster_raum.y:
+			hoechster_raum = pos
+			
+	# Leiter erstellen und genau in die Mitte (2.5, 2.5) dieses Raumes platzieren
+	var leiter = leiter_szene.instantiate()
+	var leiter_basis_pos = Vector2(hoechster_raum.x * ROOM_SIZE + 2.5, hoechster_raum.y * ROOM_SIZE + 2.5)
+	
+	leiter.position = leiter_basis_pos * TILE_PIXEL_SIZE
+	
+	# Z-Index etwas niedriger setzen, damit man ÜBER die Leiter laufen kann und nicht dahinter verschwindet
+	leiter.z_index = int(leiter_basis_pos.y) - 1 
+	
+	viewport.add_child(leiter)
 
 # Hilfsfunktion, die unten separat steht!
 func _erstelle_schatten_kachel(pos: Vector2i):

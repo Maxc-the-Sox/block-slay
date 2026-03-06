@@ -1,0 +1,16 @@
+[gd_scene format=3 uid="uid://c73vl1agbjnua"]
+
+[ext_resource type="Texture2D" uid="uid://d0sdrp3d8ixkl" path="res://assets/Classic Dungeons - Files/ladder.png" id="1_cq4ai"]
+[ext_resource type="Script" uid="uid://d115ja4h5hnow" path="res://ladder.gd" id="1_lqhsa"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_lqhsa"]
+size = Vector2(16, 16)
+
+[node name="Ladder" type="Area2D" unique_id=1773073455]
+script = ExtResource("1_lqhsa")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1300125030]
+texture = ExtResource("1_cq4ai")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1370469739]
+shape = SubResource("RectangleShape2D_lqhsa")
