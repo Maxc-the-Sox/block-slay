@@ -1,5 +1,8 @@
 extends Node
 
+var player_hp: int = 10
+var player_max_hp: int = 10
+
 # --- UNSER UNSICHTBARER RUCKSACK ---
 
 # Hier speichern wir die kompletten Tetris-Blöcke (Farben und Positionen)

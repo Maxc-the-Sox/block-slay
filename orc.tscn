@@ -408,6 +408,7 @@ height = 14.0
 
 [node name="Orc" type="CharacterBody2D" unique_id=1738686557]
 script = ExtResource("1_3xw0u")
+attack_range = 15.0
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1191481479]
 sprite_frames = SubResource("SpriteFrames_bk8dv")

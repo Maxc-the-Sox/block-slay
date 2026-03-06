@@ -124,7 +124,11 @@ func _ready():
 		if restart_button: restart_button.pressed.connect(_on_restart_pressed)
 	
 	spawn_new_piece()
-	ui_instance.update_health(player.hp, MAX_PLAYER_HP)
+	
+	# ---> NEU: Wir holen uns die echten HP aus dem Rucksack! <---
+	player.hp = GlobalData.player_hp
+	
+	ui_instance.update_health(player.hp, GlobalData.player_max_hp)
 	ui_instance.update_gold(player_gold)
 
 func _process(delta):
@@ -569,7 +573,8 @@ func perform_attack(_dir):
 func end_player_turn():
 	if player.hp <= 0: game_over("Vom Monster gefressen!"); return
 	
-	if ui_instance: ui_instance.update_health(player.hp, MAX_PLAYER_HP)
+	# ---> NEU: Hier auch GlobalData nutzen <---
+	if ui_instance: ui_instance.update_health(player.hp, GlobalData.player_max_hp)
 
 func update_player_visuals(): 
 	player.move_visual(get_pixel_pos(logical_player_pos))

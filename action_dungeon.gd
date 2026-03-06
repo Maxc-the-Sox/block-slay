@@ -51,7 +51,7 @@ func _ready():
 	
 	# NEU: Dem UI sagen, dass es die Herzen zeichnen soll!
 	if is_instance_valid(ui):
-		ui.update_health(player.hp, 10) 
+		ui.update_health(player.hp, player.max_hp) 
 
 func _process(_delta):
 	if is_instance_valid(player):
