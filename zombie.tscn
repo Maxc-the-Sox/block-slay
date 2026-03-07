@@ -411,15 +411,26 @@ radius = 5.0
 height = 14.0
 
 [node name="Zombie" type="CharacterBody2D" unique_id=863887471]
+y_sort_enabled = true
 script = ExtResource("1_roy8y")
 speed = 10.0
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1068066402]
+position = Vector2(0, -5)
+sprite_frames = SubResource("SpriteFrames_uiaus")
+animation = &"walk_up"
+autoplay = "idle_front"
+
+[node name="Schatten" type="AnimatedSprite2D" parent="." unique_id=840745925]
+modulate = Color(0, 0.50980395, 0.50980395, 0.78431374)
+z_index = 10
+position = Vector2(0, -5)
 sprite_frames = SubResource("SpriteFrames_uiaus")
 animation = &"walk_up"
 autoplay = "idle_front"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=45745503]
+position = Vector2(0, -5)
 shape = SubResource("CapsuleShape2D_roy8y")
 
 [node name="SfxAttack" type="AudioStreamPlayer2D" parent="." unique_id=1023674701]

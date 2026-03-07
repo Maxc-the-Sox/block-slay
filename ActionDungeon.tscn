@@ -3027,29 +3027,32 @@ audio_listener_enable_2d = true
 size = Vector2i(320, 640)
 render_target_update_mode = 4
 
-[node name="BodenLayer" type="TileMapLayer" parent="SubViewportContainer/SubViewport" unique_id=1917758795]
-z_index = -1
+[node name="CanvasModulate" type="CanvasModulate" parent="SubViewportContainer/SubViewport" unique_id=589477903]
+color = Color(0.02247451, 0, 0.34414572, 1)
+
+[node name="YSortWelt" type="Node2D" parent="SubViewportContainer/SubViewport" unique_id=2083664733]
+y_sort_enabled = true
+
+[node name="BodenLayer" type="TileMapLayer" parent="SubViewportContainer/SubViewport/YSortWelt" unique_id=1917758795]
+z_index = -5
 tile_set = SubResource("TileSet_ibpc2")
 
-[node name="WandLayer" type="TileMapLayer" parent="SubViewportContainer/SubViewport" unique_id=195065554]
+[node name="WandLayer" type="TileMapLayer" parent="SubViewportContainer/SubViewport/YSortWelt" unique_id=195065554]
 y_sort_enabled = true
 tile_set = SubResource("TileSet_ibpc2")
 
-[node name="ZinnenLayer" type="TileMapLayer" parent="SubViewportContainer/SubViewport" unique_id=994003593]
+[node name="ZinnenLayer" type="TileMapLayer" parent="SubViewportContainer/SubViewport/YSortWelt" unique_id=994003593]
 y_sort_enabled = true
 position = Vector2(0, -16)
 tile_set = SubResource("TileSet_ibpc2")
 
-[node name="ActionPlayer" parent="SubViewportContainer/SubViewport" unique_id=1515787833 instance=ExtResource("1_dvxun")]
+[node name="ActionPlayer" parent="SubViewportContainer/SubViewport/YSortWelt" unique_id=1515787833 instance=ExtResource("1_dvxun")]
 
-[node name="Camera2D2" type="Camera2D" parent="SubViewportContainer/SubViewport/ActionPlayer" unique_id=55273539]
+[node name="Camera2D2" type="Camera2D" parent="SubViewportContainer/SubViewport/YSortWelt/ActionPlayer" unique_id=55273539]
 
-[node name="PointLight2D2" type="PointLight2D" parent="SubViewportContainer/SubViewport/ActionPlayer" unique_id=2139211727]
+[node name="PointLight2D2" type="PointLight2D" parent="SubViewportContainer/SubViewport/YSortWelt/ActionPlayer" unique_id=2139211727]
 color = Color(0.767174, 0.2288413, 4.813075e-07, 1)
 energy = 1.5
 texture = SubResource("GradientTexture2D_54nbk")
-
-[node name="CanvasModulate" type="CanvasModulate" parent="SubViewportContainer/SubViewport" unique_id=589477903]
-color = Color(0.02247451, 0, 0.34414572, 1)
 
 [node name="UI" parent="." unique_id=1593659063 instance=ExtResource("8_54nbk")]

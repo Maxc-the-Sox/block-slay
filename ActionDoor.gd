@@ -14,17 +14,17 @@ var is_open = false
 var door_type = "front" # Wird vom Dungeon-Generator gesetzt
 
 func _ready():
-	# Erstmal alles aus
 	wall_front.disabled = true
 	wall_side.disabled = true
 	sensor_front.disabled = true
 	sensor_side.disabled = true
 	
-	# Nur die richtigen Shapes für den Typ aktivieren
 	if door_type == "side":
-		anim.play("closed_side") # Du musst diese Animationen im Sprite erstellen!
+		anim.play("closed_side")
 		wall_side.disabled = false
 		sensor_side.disabled = false
+		
+		
 	else:
 		anim.play("closed_front")
 		wall_front.disabled = false

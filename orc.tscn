@@ -411,15 +411,26 @@ radius = 5.0
 height = 14.0
 
 [node name="Orc" type="CharacterBody2D" unique_id=1738686557]
+y_sort_enabled = true
 script = ExtResource("1_3xw0u")
 attack_range = 15.0
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1191481479]
+position = Vector2(0, -4)
+sprite_frames = SubResource("SpriteFrames_bk8dv")
+animation = &"attack_down"
+autoplay = "idle_front"
+
+[node name="Schatten" type="AnimatedSprite2D" parent="." unique_id=615053954]
+modulate = Color(0, 0.50980395, 0.50980395, 0.78431374)
+z_index = 10
+position = Vector2(0, -4)
 sprite_frames = SubResource("SpriteFrames_bk8dv")
 animation = &"attack_down"
 autoplay = "idle_front"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1499209516]
+position = Vector2(0, -5)
 shape = SubResource("CapsuleShape2D_3xw0u")
 
 [node name="SfxAttack" type="AudioStreamPlayer2D" parent="." unique_id=1782330025]

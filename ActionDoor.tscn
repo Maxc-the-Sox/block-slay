@@ -82,6 +82,7 @@ size = Vector2(17, 17.5)
 size = Vector2(8, 28)
 
 [node name="ActionDoor" type="Node2D" unique_id=1733757124]
+y_sort_enabled = true
 script = ExtResource("1_74afc")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=485873099]
@@ -91,7 +92,7 @@ animation = &"closed_side"
 [node name="Area2D" type="Area2D" parent="." unique_id=917251364]
 
 [node name="SensorFront" type="CollisionShape2D" parent="Area2D" unique_id=2002232695]
-position = Vector2(0, 8)
+position = Vector2(0, 7)
 shape = SubResource("RectangleShape2D_h3u2g")
 
 [node name="SensorSide" type="CollisionShape2D" parent="Area2D" unique_id=34736416]
@@ -101,7 +102,7 @@ shape = SubResource("RectangleShape2D_loyup")
 [node name="StaticBody2D" type="StaticBody2D" parent="." unique_id=1072448082]
 
 [node name="WallFront" type="CollisionShape2D" parent="StaticBody2D" unique_id=1680396718]
-position = Vector2(0, 7.75)
+position = Vector2(0, 7)
 shape = SubResource("RectangleShape2D_bq0dq")
 
 [node name="WallSide" type="CollisionShape2D" parent="StaticBody2D" unique_id=1663859828]

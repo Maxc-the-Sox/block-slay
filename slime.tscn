@@ -246,15 +246,26 @@ radius = 5.0
 height = 13.5
 
 [node name="Slime" type="CharacterBody2D" unique_id=1731233225]
+y_sort_enabled = true
 script = ExtResource("1_5jc4t")
 speed = 50.0
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=356197024]
+position = Vector2(0, -4)
+sprite_frames = SubResource("SpriteFrames_0jgdh")
+animation = &"die"
+autoplay = "idle"
+
+[node name="Schatten" type="AnimatedSprite2D" parent="." unique_id=1266850526]
+modulate = Color(0, 0.50980395, 0.50980395, 0.78431374)
+z_index = 10
+position = Vector2(0, -4)
 sprite_frames = SubResource("SpriteFrames_0jgdh")
 animation = &"die"
 autoplay = "idle"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=11300874]
+position = Vector2(0, -4)
 shape = SubResource("CapsuleShape2D_5jc4t")
 
 [node name="SfxAttack" type="AudioStreamPlayer2D" parent="." unique_id=55660096]

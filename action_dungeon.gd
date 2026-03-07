@@ -16,10 +16,11 @@ var boden_pinsel_woerterbuch = {
 
 # ---> DIE NEUEN ADRESSEN <---
 @onready var viewport = $SubViewportContainer/SubViewport # Neu: Unser Fenster!
-@onready var boden_layer = $SubViewportContainer/SubViewport/BodenLayer
-@onready var wand_layer = $SubViewportContainer/SubViewport/WandLayer
-@onready var zinnen_layer = $SubViewportContainer/SubViewport/ZinnenLayer
-@onready var player = $SubViewportContainer/SubViewport/ActionPlayer
+@onready var ysort_welt = $SubViewportContainer/SubViewport/YSortWelt # ---> NEU: Unser Sortier-Ordner!
+@onready var boden_layer = $SubViewportContainer/SubViewport/YSortWelt/BodenLayer
+@onready var wand_layer = $SubViewportContainer/SubViewport/YSortWelt/WandLayer
+@onready var zinnen_layer = $SubViewportContainer/SubViewport/YSortWelt/ZinnenLayer
+@onready var player = $SubViewportContainer/SubViewport/YSortWelt/ActionPlayer
 @onready var ui = $UI # Sofern dein UI-Node im Baum genau "UI" heißt
 
 # Lade die Gegner-Szenen schon mal vor
@@ -112,6 +113,12 @@ func _process(_delta):
 							# Prüfen, ob das Monster zur exakt gleichen Raum-ID (Tetris-Teil) gehört!
 							if zelle_zu_raum.has(monster_zelle) and zelle_zu_raum[monster_zelle] == raum_id:
 								monster.wake_up()
+
+	# --- NEU: RÖNTGENBLICK FÜR SPIELER UND MONSTER ---
+	update_schatten(player)
+	var alle_gegner = get_tree().get_nodes_in_group("Enemies") # <-- Umbenannt zu "alle_gegner"!
+	for gegner in alle_gegner:
+		update_schatten(gegner)
 
 func generiere_dungeon():
 	print("Starte Weltenbau: Meister-Version mit perfektem Wand-Schatten!")
@@ -254,8 +261,13 @@ func generiere_dungeon():
 		else:
 			d.door_type = "front"
 			d.position = basis_pos + Vector2(1, -9) 
-		viewport.add_child(d)
-		d.z_index = int(tuer_pos.y)
+		
+		# ---> NEU: Tür in YSortWelt einfügen <---
+		ysort_welt.add_child(d)
+		
+		# z_index bei Türen brauchen wir jetzt eigentlich nicht mehr, weil Y-Sort das regelt, 
+		# aber wir lassen es sicherheitshalber stehen.
+		# d.z_index = int(tuer_pos.y)
 
 	# ==========================================
 	# 6. FOG OF WAR (Schatten verteilen)
@@ -263,7 +275,7 @@ func generiere_dungeon():
 	for pos in finale_boden_zellen.keys(): _erstelle_schatten_kachel(pos)
 	for pos in mauer_zellen: _erstelle_schatten_kachel(pos)
 
-# ==========================================
+	# ==========================================
 	# 7. MONSTER AUS DEM RUCKSACK LADEN (REPARIERT)
 	# ==========================================
 	for tetris_pos in GlobalData.monster_positionen:
@@ -276,9 +288,9 @@ func generiere_dungeon():
 		# Wir setzen sie in die Mitte des Raums (3, 3)
 		var basis_pos = Vector2(start_x + 3.0, start_y + 3.0)
 		gegner.position = basis_pos * TILE_PIXEL_SIZE
-		gegner.z_index = int(basis_pos.y)
 		
-		viewport.add_child(gegner)
+		# ---> NEU: Monster in YSortWelt einfügen <---
+		ysort_welt.add_child(gegner)
 
 	# ==========================================
 	# 8. DIE LEITER IN DEN HÖCHSTEN RAUM SETZEN
@@ -296,10 +308,8 @@ func generiere_dungeon():
 	
 	leiter.position = leiter_basis_pos * TILE_PIXEL_SIZE
 	
-	# Z-Index etwas niedriger setzen, damit man ÜBER die Leiter laufen kann und nicht dahinter verschwindet
-	leiter.z_index = int(leiter_basis_pos.y) - 1 
-	
-	viewport.add_child(leiter)
+	# ---> NEU: Leiter in YSortWelt einfügen <---
+	ysort_welt.add_child(leiter)
 
 # Hilfsfunktion, die unten separat steht!
 func _erstelle_schatten_kachel(pos: Vector2i):
@@ -311,3 +321,32 @@ func _erstelle_schatten_kachel(pos: Vector2i):
 		schatten.z_index = 50
 		viewport.add_child(schatten)
 		kachel_schatten[pos] = schatten
+
+# ==========================================
+# ---> NEU: RÖNTGENBLICK FUNKTION <---
+# ==========================================
+func update_schatten(figur):
+	if not is_instance_valid(figur): return
+	
+	# Hat die Figur überhaupt einen Klon?
+	var schatten = figur.get_node_or_null("Schatten")
+	var original_sprite = figur.get_node_or_null("AnimatedSprite2D")
+	
+	if schatten and original_sprite:
+		# Wo steht die Figur im Raster?
+		var tile_x = int(floor(figur.position.x / TILE_PIXEL_SIZE))
+		var tile_y = int(floor(figur.position.y / TILE_PIXEL_SIZE))
+		
+		# Die Kachel direkt "vor/unter" der Figur (also y + 1)
+		var check_pos = Vector2i(tile_x, tile_y + 1)
+		
+		# ---> KORREKTUR: Godot 4.3 TileMapLayer braucht nur die Koordinate! <---
+		var is_wall = wand_layer.get_cell_source_id(check_pos) != -1
+		
+		# Klon anzeigen oder verstecken!
+		schatten.visible = is_wall
+		
+		# Bewegung des Klons exakt mit dem Original synchronisieren, damit er mitläuft!
+		schatten.animation = original_sprite.animation
+		schatten.frame = original_sprite.frame
+		schatten.flip_h = original_sprite.flip_h
