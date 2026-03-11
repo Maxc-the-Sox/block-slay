@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://c73vl1agbjnua"]
 
 [ext_resource type="Texture2D" uid="uid://d0sdrp3d8ixkl" path="res://assets/Classic Dungeons - Files/ladder.png" id="1_cq4ai"]
-[ext_resource type="Script" uid="uid://d115ja4h5hnow" path="res://ladder.gd" id="1_lqhsa"]
+[ext_resource type="Script" path="res://ladder.gd" id="1_lqhsa"]
 [ext_resource type="AudioStream" uid="uid://m4dss12q0xsi" path="res://Sounds/Sfx/ladder.mp3" id="3_efw3x"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_lqhsa"]
@@ -18,3 +18,4 @@ shape = SubResource("RectangleShape2D_lqhsa")
 
 [node name="SfxLadder" type="AudioStreamPlayer" parent="." unique_id=647477027]
 stream = ExtResource("3_efw3x")
+bus = &"Sfx"

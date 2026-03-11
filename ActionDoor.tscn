@@ -111,5 +111,6 @@ shape = SubResource("RectangleShape2D_1f1jb")
 
 [node name="SfxOpen" type="AudioStreamPlayer" parent="." unique_id=1207046470]
 stream = ExtResource("3_loyup")
+bus = &"Sfx"
 
 [connection signal="body_entered" from="Area2D" to="." method="_on_area_2d_body_entered"]

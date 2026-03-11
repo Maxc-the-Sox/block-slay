@@ -1,0 +1,63 @@
+[gd_scene format=3 uid="uid://chhjtaopktvh2"]
+
+[ext_resource type="Script" uid="uid://iqa8q3jgbjsp" path="res://main_menu.gd" id="1_nihr8"]
+[ext_resource type="PackedScene" path="res://settingsmenu.tscn" id="2_jig52"]
+[ext_resource type="PackedScene" path="res://creditsmenu.tscn" id="3_0vytk"]
+
+[node name="MenuLayer" type="CanvasLayer" unique_id=267973366]
+script = ExtResource("1_nihr8")
+
+[node name="TextureRect" type="TextureRect" parent="." unique_id=1247110548]
+z_as_relative = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -188.0
+offset_bottom = 188.0
+grow_horizontal = 2
+grow_vertical = 2
+stretch_mode = 6
+
+[node name="CenterContainer" type="CenterContainer" parent="." unique_id=2091093212]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer" unique_id=1021421153]
+layout_mode = 2
+
+[node name="StartButton" type="Button" parent="CenterContainer/VBoxContainer" unique_id=1929188883]
+layout_mode = 2
+text = "Start"
+
+[node name="SettingsButton" type="Button" parent="CenterContainer/VBoxContainer" unique_id=952523062]
+layout_mode = 2
+text = "Settings"
+
+[node name="CreditsButton" type="Button" parent="CenterContainer/VBoxContainer" unique_id=1399920523]
+layout_mode = 2
+text = "Credits"
+
+[node name="Label" type="Label" parent="." unique_id=1221780082]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -84.0
+offset_top = -23.0
+grow_horizontal = 0
+grow_vertical = 0
+text = "version 0.9"
+
+[node name="SettingsLayer" parent="." unique_id=1268233503 instance=ExtResource("2_jig52")]
+visible = false
+
+[node name="CreditsLayer" parent="." unique_id=1974274864 instance=ExtResource("3_0vytk")]
+visible = false
+
+[connection signal="pressed" from="CenterContainer/VBoxContainer/StartButton" to="." method="_on_start_button_pressed"]
+[connection signal="pressed" from="CenterContainer/VBoxContainer/SettingsButton" to="." method="_on_settings_button_pressed"]
+[connection signal="pressed" from="CenterContainer/VBoxContainer/CreditsButton" to="." method="_on_credits_button_pressed"]

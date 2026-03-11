@@ -439,15 +439,19 @@ position = Vector2(7, -4)
 
 [node name="SfxAttack" type="AudioStreamPlayer2D" parent="." unique_id=813630525]
 stream = ExtResource("4_7gaqc")
+bus = &"Sfx"
 
 [node name="SfxHurt" type="AudioStreamPlayer2D" parent="." unique_id=145872835]
 stream = ExtResource("5_rxfwk")
+bus = &"Sfx"
 
 [node name="SfxDeath" type="AudioStreamPlayer2D" parent="." unique_id=949519079]
 stream = ExtResource("6_pr1ys")
+bus = &"Sfx"
 
 [node name="SfxIdle" type="AudioStreamPlayer2D" parent="." unique_id=2018999355]
 stream = ExtResource("7_bpa3x")
+bus = &"Sfx"
 
 [node name="IdleTimer" type="Timer" parent="." unique_id=606275722]
 wait_time = 4.0

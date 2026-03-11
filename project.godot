@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Block & Slay (V2)"
-run/main_scene="uid://bl8b3i00ler8u"
+run/main_scene="uid://chhjtaopktvh2"
 config/features=PackedStringArray("4.6", "GL Compatibility")
 config/icon="res://icon.svg"
 

@@ -435,15 +435,19 @@ shape = SubResource("CapsuleShape2D_roy8y")
 
 [node name="SfxAttack" type="AudioStreamPlayer2D" parent="." unique_id=1023674701]
 stream = ExtResource("3_lnshm")
+bus = &"Sfx"
 
 [node name="SfxHurt" type="AudioStreamPlayer2D" parent="." unique_id=1102260512]
 stream = ExtResource("4_x5rsa")
+bus = &"Sfx"
 
 [node name="SfxDeath" type="AudioStreamPlayer2D" parent="." unique_id=1025107887]
 stream = ExtResource("5_ogcpr")
+bus = &"Sfx"
 
 [node name="SfxIdle" type="AudioStreamPlayer2D" parent="." unique_id=1410751602]
 stream = ExtResource("6_i82o5")
+bus = &"Sfx"
 
 [node name="IdleTimer" type="Timer" parent="." unique_id=2102545259]
 wait_time = 4.0

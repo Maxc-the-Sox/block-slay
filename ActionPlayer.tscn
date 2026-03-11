@@ -589,9 +589,12 @@ texture = SubResource("GradientTexture2D_efuve")
 
 [node name="SfxAttack" type="AudioStreamPlayer" parent="." unique_id=1871604410]
 stream = ExtResource("4_w0ya8")
+bus = &"Sfx"
 
 [node name="SfxHurt" type="AudioStreamPlayer" parent="." unique_id=6021619]
 stream = ExtResource("5_j5wxd")
+bus = &"Sfx"
 
 [node name="SfxDeath" type="AudioStreamPlayer" parent="." unique_id=289411797]
 stream = ExtResource("6_h3a67")
+bus = &"Sfx"
