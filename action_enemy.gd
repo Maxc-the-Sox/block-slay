@@ -4,6 +4,10 @@ extends CharacterBody2D
 @export var speed: float = 60.0
 @export var attack_damage: int = 1
 @export var attack_range: float = 25.0 # Wie nah muss er ran, um zuzuhauen?
+@export var defense: int = 0
+
+# Erzeugt ein Dropdown-Menü im Editor!
+@export_enum("Leicht", "Mittel", "Massiv") var gewicht: String = "Leicht"
 
 var current_hp: int
 var player: Node2D = null
@@ -16,6 +20,9 @@ var is_active: bool = false # NEU: Das Monster schläft am Anfang!
 
 @onready var anim = $AnimatedSprite2D
 
+# ---> NEU: Unsere Variable für den Lebensbalken
+var health_bar: TextureProgressBar
+
 func _ready():
 	current_hp = max_hp
 	visible = false # Versteckt im Nebel
@@ -25,6 +32,36 @@ func _ready():
 	
 	player = get_tree().get_first_node_in_group("Player")
 	add_to_group("Enemies") # Gibt dem Monster automatisch sein Namensschild!
+
+	# ==========================================
+	# NEU: LEBENSBALKEN WIRD AUTOMATISCH GEBAUT
+	# ==========================================
+	health_bar = TextureProgressBar.new()
+	health_bar.name = "HealthBar"
+	add_child(health_bar) # Hängt den Balken an das Monster an
+	
+	# Wir erschaffen zwei kleine "Fake"-Bilder (30x4 Pixel groß)
+	var bg_tex = PlaceholderTexture2D.new()
+	bg_tex.size = Vector2(30, 4)
+	var fg_tex = PlaceholderTexture2D.new()
+	fg_tex.size = Vector2(30, 4)
+	
+	# Hintergrund: Dunkelgrau
+	health_bar.texture_under = bg_tex
+	health_bar.tint_under = Color(0.1, 0.1, 0.1, 0.8)
+	
+	# Vordergrund: Klassisches Rot
+	health_bar.texture_progress = fg_tex
+	health_bar.tint_progress = Color(0.8, 0.1, 0.1, 1.0)
+	
+	# Position: Mittig über dem Kopf (x = -15, y = -40)
+	# (Du kannst die -40 bei 'y' ändern, falls der Balken im Gesicht oder zu hoch hängt)
+	health_bar.position = Vector2(-15, -20)
+	
+	# Werte setzen und Balken verstecken
+	health_bar.max_value = max_hp
+	health_bar.value = current_hp
+	health_bar.hide()
 
 # NEU: Wird vom Dungeon gerufen, wenn das Licht angeht!
 func wake_up():
@@ -81,20 +118,46 @@ func _attack():
 			if player.has_method("take_damage"):
 				player.take_damage(attack_damage)
 
-func take_damage(amount: int):
+func take_damage(amount: int, attacker_pos: Vector2 = Vector2.ZERO, wucht: float = 15.0):
 	if is_dead: return
 	
-	current_hp -= amount
+	# 1. VERTEIDIGUNG BERECHNEN
+	var echter_schaden = max(1, amount - defense)
+	current_hp -= echter_schaden
 	
-	# ---> NEU: SOUND FÜR DEN SCHMERZ <---
+	print(name, " kriegt ", echter_schaden, " Schaden! (", amount, " abzüglich ", defense, " Rüstung)")
+	
+	# ---> NEU: LEBENSBALKEN AKTUALISIEREN <---
+	if health_bar:
+		health_bar.show() # Zeig dich!
+		health_bar.value = current_hp
+	
+	# 2. SOUND
 	if has_node("SfxHurt"):
 		$SfxHurt.play()
+		
+	# 3. RÜCKSTOSS BERECHNEN (KNOCKBACK)
+	if attacker_pos != Vector2.ZERO:
+		var flug_richtung = attacker_pos.direction_to(global_position)
+		var flug_distanz = 0.0
+		
+		if gewicht == "Leicht":
+			flug_distanz = wucht * 2.0 
+		elif gewicht == "Mittel":
+			flug_distanz = wucht * 1.0 
+		elif gewicht == "Massiv":
+			flug_distanz = 0.0 
+			
+		if flug_distanz > 0:
+			var kb_tween = create_tween()
+			kb_tween.tween_property(self, "global_position", global_position + (flug_richtung * flug_distanz), 0.2).set_trans(Tween.TRANS_SINE)
 	
-	# NEU: Rotes Blinken als Treffer-Feedback!
+	# 4. BLINKEN (Treffer-Feedback)
 	modulate = Color.RED
-	var tween = create_tween()
-	tween.tween_property(self, "modulate", Color.WHITE, 0.2)
+	var color_tween = create_tween()
+	color_tween.tween_property(self, "modulate", Color.WHITE, 0.2)
 	
+	# 5. TOD CHECKEN
 	if current_hp <= 0:
 		die()
 
@@ -102,6 +165,10 @@ func die():
 	is_dead = true
 	is_active = false
 	velocity = Vector2.ZERO
+	
+	# ---> NEU: LEBENSBALKEN BEIM TOD VERSTECKEN <---
+	if health_bar:
+		health_bar.hide()
 	
 	# ---> NEU: SOUND FÜR DAS STERBEN <---
 	if has_node("SfxDeath"):
@@ -116,20 +183,13 @@ func die():
 	if is_instance_valid(player):
 		var richtung_vom_spieler = player.global_position.direction_to(global_position)
 		
-		# Wir schauen, ob der Schlag eher von oben/unten oder links/rechts kam
 		if abs(richtung_vom_spieler.x) > abs(richtung_vom_spieler.y):
-			# Seitlicher Schlag
 			animation_zu_spielen = "die_front"
-			# Wenn der Spieler links von mir steht (x > 0), falle ich nach RECHTS (nicht gespiegelt)
-			# Wenn der Spieler rechts von mir steht (x < 0), falle ich nach LINKS (gespiegelt)
 			anim.flip_h = richtung_vom_spieler.x < 0
 		else:
-			# Schlag von oben oder unten
 			if richtung_vom_spieler.y < 0:
-				# Spieler steht unter mir -> Ich falle nach oben (hinten) weg
 				animation_zu_spielen = "die_back"
 			else:
-				# Spieler steht über mir -> Ich falle nach unten (vorne) weg
 				animation_zu_spielen = "die_front"
 
 	# --- AUSFÜHRUNG ---
@@ -147,25 +207,17 @@ func _update_direction_string(direction: Vector2):
 		last_direction = "down" if direction.y > 0 else "up"
 
 func _on_animation_finished():
-	# WICHTIG: Hier den Unterstrich weggelassen, damit er "attack" und "attack_left" erkennt!
 	if anim.animation.begins_with("attack"):
 		is_attacking = false 
 	elif anim.animation.begins_with("die"):
-		# Warte 3 Sekunden, bevor die Leiche gelöscht wird
 		await get_tree().create_timer(3.0).timeout
-		
-		# Optional: Die Leiche langsam durchsichtig machen (Faden)
 		var tween = create_tween()
 		tween.tween_property(self, "modulate:a", 0.0, 1.0)
 		await tween.finished
-		
 		queue_free()
-
 
 func _on_idle_timer_timeout():
 	if not is_dead and is_active:
 		if has_node("SfxIdle"):
 			$SfxIdle.play()
-		# Timer auf eine neue zufällige Zeit stellen (zwischen 3 und 8 Sekunden), 
-		# damit sie nicht wie Roboter alle im selben Takt grunzen!
 		$IdleTimer.wait_time = randf_range(3.0, 8.0)

@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://ch1antutd7q5y"]
+
+[ext_resource type="Script" uid="uid://4sjrgff1x1mu" path="res://Skripte/item_data.gd" id="1_0mb6b"]
+[ext_resource type="Texture2D" uid="uid://bra3ix456p1ro" path="res://assets/Rpg Icon Pack/Weapons/Swords/4.png" id="1_cqqwb"]
+
+[resource]
+script = ExtResource("1_0mb6b")
+item_name = "Stahlschwert"
+icon = ExtResource("1_cqqwb")
+basis_atk = 16
+basis_knockback = 2
+beschreibung = "Perfekt geschmiedet. Scharf, hart und tödlich."
+equip_slot = "Waffe"
+metadata/_custom_type_script = "uid://4sjrgff1x1mu"

@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="AffixData" format=3 uid="uid://d2wtcanvc886h"]
+
+[ext_resource type="Script" uid="uid://d3xi4fk6wm5q2" path="res://Skripte/affix_data.gd" id="1_i3bir"]
+
+[resource]
+script = ExtResource("1_i3bir")
+affix_name = " des Anfängers"
+typ = 1
+erlaubte_ausruestung = Array[int]([0, 2, 4, 5, 6, 7])
+bonus_max_hp = 5
+metadata/_custom_type_script = "uid://d3xi4fk6wm5q2"

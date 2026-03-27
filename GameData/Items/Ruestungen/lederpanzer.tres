@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cq33ngmuqfyvy"]
+
+[ext_resource type="Texture2D" uid="uid://cvtpeu18vj06x" path="res://assets/Rpg Icon Pack/Armor/Chests/16.png" id="1_1njkt"]
+[ext_resource type="Script" uid="uid://4sjrgff1x1mu" path="res://Skripte/item_data.gd" id="1_gur6u"]
+
+[resource]
+script = ExtResource("1_gur6u")
+item_name = "Lederpanzer"
+typ = 5
+icon = ExtResource("1_1njkt")
+basis_def = 6
+basis_max_hp = 5
+beschreibung = "Gekochtes Leder. Leicht und robust."
+equip_slot = "Rüstung"
+metadata/_custom_type_script = "uid://4sjrgff1x1mu"

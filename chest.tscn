@@ -44,6 +44,8 @@ animations = [{
 "speed": 5.0
 }]
 
+[sub_resource type="CircleShape2D" id="CircleShape2D_8uwsg"]
+
 [node name="Chest" type="Node2D" unique_id=95540494]
 script = ExtResource("1_8uwsg")
 
@@ -53,3 +55,9 @@ sprite_frames = SubResource("SpriteFrames_bv3sb")
 animation = &"open"
 centered = false
 flip_h = true
+
+[node name="InteractArea" type="Area2D" parent="." unique_id=118798782]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="InteractArea" unique_id=292746212]
+position = Vector2(0, 9)
+shape = SubResource("CircleShape2D_8uwsg")

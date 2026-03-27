@@ -19,10 +19,11 @@ config/icon="res://icon.svg"
 
 GlobalData="*uid://ce4cqb2iogdu6"
 MusicManager="*uid://cy55qf07abwgr"
+LootManager="*uid://c8jpwx5j00c4k"
 
 [display]
 
-window/size/viewport_width=640
+window/size/viewport_width=800
 window/size/viewport_height=960
 window/stretch/mode="viewport"
 

@@ -1,6 +1,6 @@
 extends Control
 
-const CELL_SIZE = 8 # Wie groß soll ein Raum auf der Karte sein? (8x8 Pixel)
+const CELL_SIZE = 6 # Wie groß soll ein Raum auf der Karte sein? (8x8 Pixel)
 
 # Die gleichen Farben wie in deinem Tetris-Modus
 const COLORS = [

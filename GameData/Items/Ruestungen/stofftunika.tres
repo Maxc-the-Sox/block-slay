@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://clkhlo8vie0xq"]
+
+[ext_resource type="Texture2D" uid="uid://bplvsvbgmwy8r" path="res://assets/Rpg Icon Pack/Armor/Chests/17.png" id="1_i4bg5"]
+[ext_resource type="Script" uid="uid://4sjrgff1x1mu" path="res://Skripte/item_data.gd" id="1_ibt5s"]
+
+[resource]
+script = ExtResource("1_ibt5s")
+item_name = "Stofftunika"
+typ = 5
+icon = ExtResource("1_i4bg5")
+basis_def = 2
+beschreibung = "Hält warm, aber stoppt keine Klingen."
+equip_slot = "Rüstung"
+metadata/_custom_type_script = "uid://4sjrgff1x1mu"

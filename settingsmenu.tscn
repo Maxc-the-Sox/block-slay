@@ -1,57 +1,57 @@
 [gd_scene format=3 uid="uid://5djs4vlqho2m"]
 
-[ext_resource type="Script" path="res://settingsmenu.gd" id="1_h424u"]
+[ext_resource type="Script" uid="uid://05uovxcxo745" path="res://settingsmenu.gd" id="1_h424u"]
 
-[node name="CanvasLayer" type="CanvasLayer"]
+[node name="CanvasLayer" type="CanvasLayer" unique_id=993016837]
 script = ExtResource("1_h424u")
 
-[node name="CenterContainer" type="CenterContainer" parent="."]
+[node name="CenterContainer" type="CenterContainer" parent="." unique_id=340836152]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer" unique_id=18613918]
 layout_mode = 2
 
-[node name="SfxLabel" type="Label" parent="CenterContainer/VBoxContainer"]
+[node name="SfxLabel" type="Label" parent="CenterContainer/VBoxContainer" unique_id=25999937]
 layout_mode = 2
 text = "Sfx volume"
 
-[node name="SfxSlider" type="HSlider" parent="CenterContainer/VBoxContainer"]
+[node name="SfxSlider" type="HSlider" parent="CenterContainer/VBoxContainer" unique_id=582926970]
 layout_mode = 2
 max_value = 1.0
 step = 0.05
 value = 0.8
 
-[node name="Control" type="Control" parent="CenterContainer/VBoxContainer"]
+[node name="Control" type="Control" parent="CenterContainer/VBoxContainer" unique_id=2028120188]
 custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
 
-[node name="MusicLabel" type="Label" parent="CenterContainer/VBoxContainer"]
+[node name="MusicLabel" type="Label" parent="CenterContainer/VBoxContainer" unique_id=131224197]
 layout_mode = 2
 text = "music volume"
 
-[node name="MusicSlider" type="HSlider" parent="CenterContainer/VBoxContainer"]
+[node name="MusicSlider" type="HSlider" parent="CenterContainer/VBoxContainer" unique_id=1636780610]
 layout_mode = 2
 max_value = 1.0
 step = 0.05
 value = 0.8
 
-[node name="Control2" type="Control" parent="CenterContainer/VBoxContainer"]
+[node name="Control2" type="Control" parent="CenterContainer/VBoxContainer" unique_id=560678160]
 custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 
-[node name="Button" type="Button" parent="CenterContainer/VBoxContainer"]
+[node name="Button" type="Button" parent="CenterContainer/VBoxContainer" unique_id=1963440174]
 layout_mode = 2
 text = "save settings"
 
-[node name="Button2" type="Button" parent="CenterContainer/VBoxContainer"]
+[node name="Button2" type="Button" parent="CenterContainer/VBoxContainer" unique_id=1443452234]
 layout_mode = 2
 text = "return"
 
-[node name="TestSoundPlayer" type="AudioStreamPlayer2D" parent="."]
+[node name="TestSoundPlayer" type="AudioStreamPlayer2D" parent="." unique_id=1270038045]
 
 [connection signal="drag_ended" from="CenterContainer/VBoxContainer/SfxSlider" to="." method="_on_sfx_slider_drag_ended"]
 [connection signal="value_changed" from="CenterContainer/VBoxContainer/SfxSlider" to="." method="_on_sfx_slider_value_changed"]

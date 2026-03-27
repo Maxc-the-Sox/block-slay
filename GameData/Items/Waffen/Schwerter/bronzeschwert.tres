@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bgj1y6j1tccp8"]
+
+[ext_resource type="Texture2D" uid="uid://qgx7736qjqyg" path="res://assets/Rpg Icon Pack/Weapons/Swords/26.png" id="1_eud5g"]
+[ext_resource type="Script" uid="uid://4sjrgff1x1mu" path="res://Skripte/item_data.gd" id="1_sov1v"]
+
+[resource]
+script = ExtResource("1_sov1v")
+item_name = "Bronzeschwert"
+icon = ExtResource("1_eud5g")
+basis_atk = 5
+basis_knockback = 1
+beschreibung = "Schwerer als Holz, aber wird schnell stumpf."
+equip_slot = "Waffe"
+metadata/_custom_type_script = "uid://4sjrgff1x1mu"

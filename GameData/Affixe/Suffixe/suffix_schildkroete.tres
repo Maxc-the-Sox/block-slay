@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="AffixData" format=3 uid="uid://bd7thwbvyhoc2"]
+
+[ext_resource type="Script" uid="uid://d3xi4fk6wm5q2" path="res://Skripte/affix_data.gd" id="1_oq3fu"]
+
+[resource]
+script = ExtResource("1_oq3fu")
+affix_name = " der Schildkröte"
+typ = 1
+erlaubte_ausruestung = Array[int]([0, 2, 4, 5, 6, 7])
+bonus_def = 3
+metadata/_custom_type_script = "uid://d3xi4fk6wm5q2"

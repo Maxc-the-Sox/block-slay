@@ -4,6 +4,11 @@ extends CharacterBody2D
 @export var speed: float = 45.0 
 @export var attack_range: float = 120.0 
 @export var retreat_range: float = 60.0 
+@export var attack_damage: int = 14
+@export var defense: int = 0
+
+# Erzeugt ein Dropdown-Menü im Editor!
+@export_enum("Leicht", "Mittel", "Massiv") var gewicht: String = "Leicht"
 
 # ---> NEU: UNIVERSAL-GESCHOSS <---
 # Hier kannst du im Inspektor reinziehen, was er schießen soll (Pfeil, Feuerball, Stein...)
@@ -20,6 +25,9 @@ var is_active: bool = false
 @onready var anim = $AnimatedSprite2D
 @onready var shoot_point = $ShootPoint 
 
+# ---> NEU: Unsere Variable für den Lebensbalken
+var health_bar: TextureProgressBar
+
 func _ready():
 	current_hp = max_hp
 	visible = false 
@@ -27,6 +35,35 @@ func _ready():
 		anim.animation_finished.connect(_on_animation_finished)
 	player = get_tree().get_first_node_in_group("Player")
 	add_to_group("Enemies")
+
+	# ==========================================
+	# NEU: LEBENSBALKEN WIRD AUTOMATISCH GEBAUT
+	# ==========================================
+	health_bar = TextureProgressBar.new()
+	health_bar.name = "HealthBar"
+	add_child(health_bar) # Hängt den Balken an das Monster an
+	
+	# Wir erschaffen zwei kleine "Fake"-Bilder (30x4 Pixel groß)
+	var bg_tex = PlaceholderTexture2D.new()
+	bg_tex.size = Vector2(30, 4)
+	var fg_tex = PlaceholderTexture2D.new()
+	fg_tex.size = Vector2(30, 4)
+	
+	# Hintergrund: Dunkelgrau
+	health_bar.texture_under = bg_tex
+	health_bar.tint_under = Color(0.1, 0.1, 0.1, 0.8)
+	
+	# Vordergrund: Klassisches Rot
+	health_bar.texture_progress = fg_tex
+	health_bar.tint_progress = Color(0.8, 0.1, 0.1, 1.0)
+	
+	# Position: Mittig über dem Kopf (x = -15, y = -40)
+	health_bar.position = Vector2(-15, -20)
+	
+	# Werte setzen und Balken verstecken
+	health_bar.max_value = max_hp
+	health_bar.value = current_hp
+	health_bar.hide()
 
 func wake_up():
 	if is_dead: return
@@ -76,10 +113,6 @@ func _shoot_projectile(direction: Vector2):
 		return
 		
 	var proj = projectile_scene.instantiate()
-	
-	# ---> HIER WAR DER FEHLER! <---
-	# FALSCH: get_tree().current_scene.add_child(proj)
-	# RICHTIG: Wir fügen den Pfeil genau dort ein, wo das Skelett selbst ist!
 	get_parent().add_child(proj) 
 	
 	if shoot_point:
@@ -90,21 +123,53 @@ func _shoot_projectile(direction: Vector2):
 	proj.direction = direction
 	proj.rotation = direction.angle()
 	
-	# ---> NEU: SOUND FÜR DEN BOGENSCHUSS <---
+	# ---> NEU: Wir laden den Schaden des Skeletts in den Pfeil! <---
+	if "damage" in proj:
+		proj.damage = attack_damage
+	
 	if has_node("SfxAttack"):
 		$SfxAttack.play()
 
-func take_damage(amount: int):
+func take_damage(amount: int, attacker_pos: Vector2 = Vector2.ZERO, wucht: float = 15.0):
 	if is_dead: return
-	current_hp -= amount
 	
-	# ---> NEU: SOUND FÜR DEN SCHMERZ <---
+	# 1. VERTEIDIGUNG BERECHNEN
+	var echter_schaden = max(1, amount - defense)
+	current_hp -= echter_schaden
+	
+	print(name, " kriegt ", echter_schaden, " Schaden! (", amount, " abzüglich ", defense, " Rüstung)")
+	
+	# ---> NEU: LEBENSBALKEN AKTUALISIEREN <---
+	if health_bar:
+		health_bar.show() # Zeig dich!
+		health_bar.value = current_hp
+	
+	# 2. SOUND
 	if has_node("SfxHurt"):
 		$SfxHurt.play()
 		
+	# 3. RÜCKSTOSS BERECHNEN (KNOCKBACK)
+	if attacker_pos != Vector2.ZERO:
+		var flug_richtung = attacker_pos.direction_to(global_position)
+		var flug_distanz = 0.0
+		
+		if gewicht == "Leicht":
+			flug_distanz = wucht * 2.0 
+		elif gewicht == "Mittel":
+			flug_distanz = wucht * 1.0 
+		elif gewicht == "Massiv":
+			flug_distanz = 0.0 
+			
+		if flug_distanz > 0:
+			var kb_tween = create_tween()
+			kb_tween.tween_property(self, "global_position", global_position + (flug_richtung * flug_distanz), 0.2).set_trans(Tween.TRANS_SINE)
+	
+	# 4. BLINKEN (Treffer-Feedback)
 	modulate = Color.RED
-	var tween = create_tween()
-	tween.tween_property(self, "modulate", Color.WHITE, 0.2)
+	var color_tween = create_tween()
+	color_tween.tween_property(self, "modulate", Color.WHITE, 0.2)
+	
+	# 5. TOD CHECKEN
 	if current_hp <= 0:
 		die()
 
@@ -112,6 +177,10 @@ func die():
 	is_dead = true
 	is_active = false
 	velocity = Vector2.ZERO
+	
+	# ---> NEU: LEBENSBALKEN BEIM TOD VERSTECKEN <---
+	if health_bar:
+		health_bar.hide()
 	
 	# ---> NEU: SOUND FÜR DAS STERBEN <---
 	if has_node("SfxDeath"):
@@ -160,11 +229,8 @@ func _on_animation_finished():
 		await tween.finished
 		queue_free()
 
-
 func _on_idle_timer_timeout():
 	if not is_dead and is_active:
 		if has_node("SfxIdle"):
 			$SfxIdle.play()
-		# Timer auf eine neue zufällige Zeit stellen (zwischen 3 und 8 Sekunden), 
-		# damit sie nicht wie Roboter alle im selben Takt grunzen!
 		$IdleTimer.wait_time = randf_range(3.0, 8.0)

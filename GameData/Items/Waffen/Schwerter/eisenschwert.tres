@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://b8udsr2wcpi1b"]
+
+[ext_resource type="Script" uid="uid://4sjrgff1x1mu" path="res://Skripte/item_data.gd" id="1_pgrnc"]
+[ext_resource type="Texture2D" uid="uid://coce1001ld4o6" path="res://assets/Rpg Icon Pack/Weapons/Swords/1.png" id="1_xvmiu"]
+
+[resource]
+script = ExtResource("1_pgrnc")
+item_name = "Eisenschwert"
+icon = ExtResource("1_xvmiu")
+basis_atk = 10
+basis_knockback = 1
+beschreibung = "Standardwaffe der regulären Wachen."
+equip_slot = "Waffe"
+metadata/_custom_type_script = "uid://4sjrgff1x1mu"

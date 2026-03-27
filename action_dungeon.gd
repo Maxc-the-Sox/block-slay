@@ -25,13 +25,14 @@ var boden_pinsel_woerterbuch = {
 
 # Lade die Gegner-Szenen schon mal vor
 var gegner_szenen = [
-	preload("res://slime.tscn"),
-	preload("res://orc.tscn"),
-	preload("res://skeleton_archer.tscn"),
-	preload("res://zombie.tscn") #
+	preload("res://GameData/monster/slime.tscn"),
+	preload("res://GameData/monster/orc.tscn"),
+	preload("res://GameData/monster/skeleton_archer.tscn"),
+	preload("res://GameData/monster/zombie.tscn") #
 ]
 
 var leiter_szene = preload("res://ladder.tscn") # NEU: Die Leiter laden
+var truhe_szene = preload("res://chest.tscn") # ---> NEU: Die Schatztruhe laden!
 
 # NEU: Das Management für die "Post-it" Schatten
 var zelle_zu_raum = {} 
@@ -264,10 +265,6 @@ func generiere_dungeon():
 		
 		# ---> NEU: Tür in YSortWelt einfügen <---
 		ysort_welt.add_child(d)
-		
-		# z_index bei Türen brauchen wir jetzt eigentlich nicht mehr, weil Y-Sort das regelt, 
-		# aber wir lassen es sicherheitshalber stehen.
-		# d.z_index = int(tuer_pos.y)
 
 	# ==========================================
 	# 6. FOG OF WAR (Schatten verteilen)
@@ -311,7 +308,23 @@ func generiere_dungeon():
 	# ---> NEU: Leiter in YSortWelt einfügen <---
 	ysort_welt.add_child(leiter)
 
+	# ==========================================
+	# 9. SCHATZTRUHEN AUS DEM RUCKSACK LADEN (Jetzt an der richtigen Stelle!)
+	# ==========================================
+	if "truhen_positionen" in GlobalData:
+		for tetris_pos in GlobalData.truhen_positionen:
+			var start_x = int(tetris_pos.x) * ROOM_SIZE
+			var start_y = int(tetris_pos.y) * ROOM_SIZE
+			
+			var truhe = truhe_szene.instantiate()
+			var basis_pos = Vector2(start_x + 3.0, start_y + 3.0)
+			truhe.position = basis_pos * TILE_PIXEL_SIZE
+			
+			ysort_welt.add_child(truhe)
+
+# ==========================================
 # Hilfsfunktion, die unten separat steht!
+# ==========================================
 func _erstelle_schatten_kachel(pos: Vector2i):
 	if not kachel_schatten.has(pos):
 		var schatten = ColorRect.new()

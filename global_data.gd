@@ -1,7 +1,7 @@
 extends Node
 
-var player_hp: int = 10
-var player_max_hp: int = 10
+var player_hp: int = 100
+var player_max_hp: int = 100
 
 # --- UNSER UNSICHTBARER RUCKSACK ---
 
