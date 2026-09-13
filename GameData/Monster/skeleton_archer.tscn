@@ -437,7 +437,7 @@ autoplay = "idle_front"
 position = Vector2(0, -5)
 shape = SubResource("CapsuleShape2D_0f7ef")
 
-[node name="Shootpoint" type="Marker2D" parent="." unique_id=2117878910]
+[node name="ShootPoint" type="Marker2D" parent="." unique_id=2117878910]
 position = Vector2(7, -4)
 
 [node name="SfxAttack" type="AudioStreamPlayer2D" parent="." unique_id=813630525]

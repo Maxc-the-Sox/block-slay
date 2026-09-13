@@ -20,7 +20,12 @@ var last_direction: String = "down"
 
 var is_attacking: bool = false
 var is_dead: bool = false
-var is_active: bool = false 
+var is_active: bool = false
+
+# --- WUCHT-BASIERTER KNOCKBACK (physikalisch, respektiert Wand-Kollision) ---
+var knockback_velocity: Vector2 = Vector2.ZERO
+var knockback_timer: float = 0.0
+const KNOCKBACK_DURATION: float = 0.2
 
 @onready var anim = $AnimatedSprite2D
 @onready var shoot_point = $ShootPoint 
@@ -70,8 +75,17 @@ func wake_up():
 	is_active = true
 	visible = true
 
-func _physics_process(_delta):
-	if is_dead or is_attacking or player == null or not is_active:
+func _physics_process(delta):
+	if is_dead:
+		return
+
+	if knockback_timer > 0.0:
+		knockback_timer = max(knockback_timer - delta, 0.0)
+		velocity = knockback_velocity * (knockback_timer / KNOCKBACK_DURATION)
+		move_and_slide()
+		return
+
+	if is_attacking or player == null or not is_active:
 		return
 
 	var distance = global_position.distance_to(player.global_position)
@@ -161,8 +175,9 @@ func take_damage(amount: int, attacker_pos: Vector2 = Vector2.ZERO, wucht: float
 			flug_distanz = 0.0 
 			
 		if flug_distanz > 0:
-			var kb_tween = create_tween()
-			kb_tween.tween_property(self, "global_position", global_position + (flug_richtung * flug_distanz), 0.2).set_trans(Tween.TRANS_SINE)
+			# Lineares Abklingen: Durchschnittsgeschwindigkeit ist die Hälfte der Anfangsgeschwindigkeit
+			knockback_velocity = flug_richtung * (flug_distanz * 2.0 / KNOCKBACK_DURATION)
+			knockback_timer = KNOCKBACK_DURATION
 	
 	# 4. BLINKEN (Treffer-Feedback)
 	modulate = Color.RED

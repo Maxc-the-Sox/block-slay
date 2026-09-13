@@ -71,43 +71,6 @@ func _unhandled_input(event):
 		elif last_direction == "up": aim.y -= 10
 		_starte_angriff(aim)
 
-	# --- HINWEIS: Hier hast du einen doppelten Input-Block für MOUSE_BUTTON_LEFT
-	# den ich absichtlich unberührt gelassen habe, damit nichts von deiner Logik kaputtgeht ---
-	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
-		var mouse_pos = get_global_mouse_position()
-		
-		var clicked_enemy = null
-		var alle_monster = get_tree().get_nodes_in_group("Enemies")
-		for enemy in alle_monster:
-			if is_instance_valid(enemy) and not enemy.is_dead and enemy.is_active:
-				if mouse_pos.distance_to(enemy.global_position) < 20.0:
-					clicked_enemy = enemy
-					break
-					
-		if clicked_enemy:
-			if Input.is_key_pressed(KEY_SHIFT):
-				target_enemy = null
-				_starte_angriff(mouse_pos)
-			else:
-				target_enemy = clicked_enemy
-				is_moving_to_click = false 
-		elif Input.is_key_pressed(KEY_SHIFT):
-			target_enemy = null
-			_starte_angriff(mouse_pos)
-		else:
-			target_enemy = null
-			target_position = mouse_pos
-			is_moving_to_click = true
-
-	elif event.is_action_pressed("attack") and not event is InputEventMouseButton:
-		target_enemy = null
-		var aim = global_position
-		if last_direction == "right": aim.x += 10
-		elif last_direction == "left": aim.x -= 10
-		elif last_direction == "down": aim.y += 10
-		elif last_direction == "up": aim.y -= 10
-		_starte_angriff(aim)
-
 func _starte_angriff(ziel_position: Vector2):
 	is_attacking = true
 	is_moving_to_click = false 
