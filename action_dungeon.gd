@@ -25,10 +25,10 @@ var boden_pinsel_woerterbuch = {
 
 # Lade die Gegner-Szenen schon mal vor
 var gegner_szenen = [
-	preload("res://GameData/monster/slime.tscn"),
-	preload("res://GameData/monster/orc.tscn"),
-	preload("res://GameData/monster/skeleton_archer.tscn"),
-	preload("res://GameData/monster/zombie.tscn") #
+	preload("res://GameData/Monster/slime.tscn"),
+	preload("res://GameData/Monster/orc.tscn"),
+	preload("res://GameData/Monster/skeleton_archer.tscn"),
+	preload("res://GameData/Monster/zombie.tscn") #
 ]
 
 var leiter_szene = preload("res://ladder.tscn") # NEU: Die Leiter laden

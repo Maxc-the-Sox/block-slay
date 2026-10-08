@@ -33,16 +33,16 @@ var doors = {}
 var grid_age = {} 
 var current_age = 0
 
-var wall_tile_scene = preload("res://WallTile.tscn")
+var wall_tile_scene = preload("res://walltile.tscn")
 var wall_nodes = {} 
 
 # TÜREN
-var door_scene = preload("res://Door.tscn")
+var door_scene = preload("res://door.tscn")
 var door_nodes = {}
 var opened_doors = [] 
 
 # UI Referenz
-var ui_scene = preload("res://UI.tscn")
+var ui_scene = preload("res://ui.tscn")
 var ui_instance = null
 
 var revealed_cells = []
@@ -84,7 +84,7 @@ var fall_speed = 1.0
 var player_gold = 0 
 
 # GEGNER & OBJEKTE
-var chest_scene = preload("res://Chest.tscn") 
+var chest_scene = preload("res://chest.tscn") 
 
 var enemies = [] # Hält ab jetzt nur noch Vector2-Koordinaten, keine echten Szenen mehr!
 var chests = {} 
